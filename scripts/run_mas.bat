@@ -1,0 +1,1 @@
+uvicorn test.test_mas:app --reload --host 0.0.0.0 --port 5000

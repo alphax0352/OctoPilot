@@ -1,0 +1,56 @@
+1. Implement login - register(in this case only use id and password. e.g: (violet, P@ssw0rd))
+2. Implement dashboard - in this page, there are only tables. At first, have to implement sidebar in the left(accounts, jobs, applications). and also in the right, there is container that include each table.
+	Accounts(table)
+	- email: Email
+	- platform(combobox): enum(indeed, linkedin, glassdoor, adzuna)
+	- credential(platform credential): str
+	- category(combobox): enum(AI, Full Stack, DevOps)
+	- keyword(query for your own specific): str
+	- [X] : auto_apply button
+
+	Jobs(table)
+	- job_id(job id): uuid
+	- title(Job title): str
+	- company(company job posted): str
+	- description(full job description): text
+	- location(required location): str
+	- employment_type(combobox): enum(full-time, part-time, contract)
+	- salary_range: str
+	- benefits: text
+	- created_at: date
+
+	applications(table)
+	- job_id(reference value from Jobs using foreign key): uuid
+	- title(job title - also reference value): str
+	- description(full job description): text
+	- resume(full resume): text
+	- send_date(date application sended): date
+	- status: enum(pending, accepted, rejected)
+
+
+3. Mock data
+- Accounts
+email,				platform,			credential,			category,			keyword      		
+alpha@gmail.com 	indeed.com 			P@ssw0rd			AI 					LLM, Chatbot 		button
+alpha@gmail.com 	Adzuna.com 			P@ssw0rd			AI 					LLM, Chatbot 		button
+captain@gmail.com 	linkedin.com 		P@ssw0rd			Full Stack 			React, Fastapi      button
+
+
+- Jobs
+job_id				title						company			description	 	location	employment_type		salary_range	benefits  created_at
+2938db29349287d,	Senior Software engineer    proton.ai       XXX				Boston, MA	 full-time			120-140k		xxx		  2025-2-20
+2938db29349287d,	Senior AI engineer    		proton.ai       XXX				Boston, MA	 full-time			120-140k		xxx		  2025-2-20
+2938db29349287d,	Senior DevOps engineer    	proton.ai       XXX				Boston, MA	 contract			120-140k		xxx		  2025-2-20
+2938db29349287d,	Senior ML engineer    		proton.ai       XXX				Boston, MA	 part-time			120-140k		xxx		  2025-2-20
+2938db29349287d,	Senior NLP engineer    		proton.ai       XXX				Boston, MA	 full-time			120-140k		xxx		  2025-2-20
+
+- Applications
+job_id				title						description		resume		send_date		status
+2938db29349287d		Seinor Software Engineer	xxx				xxx			2025-02-13		pending
+2938db29349287d		Seinor AI Engineer			xxx				xxx			2025-03-13		rejected
+2938db29349287d		Seinor ML Engineer			xxx				xxx			2025-01-13		pending
+2938db29349287d		Seinor DevOps Engineer		xxx				xxx			2025-02-13		pending
+
+
+
+

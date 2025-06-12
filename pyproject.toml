@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "OctoPilot"
+version = "1.0.0"
+description = "An intelligent multi-threaded job application automation APIs that leverages advanced capabilities to navigate job boards efficiently - like an octopus masterfully using its eight arms to traverse the digital waters of opportunity."
+authors = ["alpha, jka, vnycorn - <alphax0352@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.115.8"
+langchain = "^0.3.17"
+langgraph = "^0.2.69"
+psycopg2 = "^2.9.10"
+pydantic-settings = "^2.7.1"
+pytest = "^8.3.4"
+
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.10.1"
+pre-commit = "^3.5.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
