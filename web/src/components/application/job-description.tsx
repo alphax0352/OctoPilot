@@ -1,23 +1,16 @@
-import Markdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import Markdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { ScrollArea } from "../ui/scroll-area";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { ScrollArea } from '../ui/scroll-area'
 
-export function JobDescription({
-  company,
-  title,
-  description,
-}: {
-  company: string;
-  title: string;
-  description: string;
-}) {
+interface IJobDescription {
+  company: string
+  title: string
+  description: string
+}
+
+export function JobDescription({ company, title, description }: IJobDescription) {
   return (
     <Sheet>
       <SheetTrigger>
@@ -34,5 +27,5 @@ export function JobDescription({
         </ScrollArea>
       </SheetContent>
     </Sheet>
-  );
+  )
 }

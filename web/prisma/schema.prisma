@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,126 +7,161 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Account {
-  id                    String            @id @default(cuid())
-  userId                String
-  provider              String
-  providerAccountId     String
-  type                  String
-  refresh_token         String?           @db.Text
-  access_token          String?           @db.Text
-  expires_at            Int?
-  token_type            String?
-  scope                 String?
-  id_token              String?           @db.Text
-  session_state         String?
-  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@map("accounts")
-}
-
-model Session {
-  id                    String            @id @default(cuid())
-  sessionToken          String            @unique
-  userId                String
-  expires               DateTime
-  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("sessions")
-}
-
-model User {
-  id                    String            @id @default(cuid())
-  name                  String
-  email                 String            @unique
-  password              String?
-  image                 String?
-  emailVerified         DateTime?
-  isVerified            Boolean           @default(false)
-  accounts              Account[]
-  sessions              Session[]
-  applications          Application[]
-  createdAt             DateTime          @default(now())
-  updatedAt             DateTime          @updatedAt
-  lastActiveAt          DateTime          @default(now())
-  mainInfo              MainInfo?
-  employmentHistory     EmploymentHistory[]
-  educationInfo         EducationInfo?
-  resumeWriterPrompt    String?
-  coverLetterPrompt     String?
-  resumeTemplatePath    String?
-
-  @@map("users")
-}
-
-model MainInfo {
-  id                    String            @id @default(cuid())
-  userId                String            @unique
-  name                  String?
-  email                 String?
-  phone                 String?
-  location              String?
-  linkedin              String?
-  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("main_info")
-}
-
-model EducationInfo {
-  id                    String            @id @default(cuid())
-  userId                String            @unique
-  school                String?
-  degree                String?
-  from                  String?
-  to                    String?
-  location              String?
-  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("education_info")
-}
-
 model Application {
-  id                    Int               @id @default(autoincrement())
-  userId                String
-  title                 String
-  company               String
-  description           String
-  resumePath            String?
-  coverLetter           String?
-  status                ApplicationStatus @default(APPLIED)
-  createdAt             DateTime          @default(now())
-  updatedAt             DateTime          @updatedAt
-  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                  Int                   @id @default(autoincrement())
+  notice_period       String?               @db.VarChar
+  salary_range_usd    String?               @db.VarChar
+  created_at          DateTime?             @db.Timestamp(6)
+  updated_at          DateTime?             @db.Timestamp(6)
+  resume_path         String                @db.VarChar
+  cover_letter_path   String?               @db.VarChar
+  legal_authorization legal_authorization[]
+  self_identification self_identification[]
+  work_preferences    work_preferences[]
 
+  @@index([id], map: "ix_applications_id")
   @@map("applications")
 }
 
-model EmploymentHistory {
-  id                    Int               @id @default(autoincrement())
-  userId                String
-  company               String?
-  title                 String?
-  from                  String?
-  to                    String?
-  location              String?
-  description           String?
-  // projects              String?
-  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("employment_history")
+model alembic_version {
+  version_num String @id(map: "alembic_version_pkc") @db.VarChar(32)
 }
 
-enum ApplicationStatus {
-  APPLIED
-  INTRO
-  STEP_2
-  STEP_3
-  STEP_4
-  STEP_5
-  STEP_6
-  FINAL
-  ONBOARDING
-  REJECTED
+model certification {
+  id          Int     @id @default(autoincrement())
+  name        String? @db.VarChar
+  description String? @db.VarChar
+  resume_id   Int?
+  resume      resume? @relation(fields: [resume_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_certification_id")
 }
 
+model education {
+  id                     Int     @id @default(autoincrement())
+  education_level        String? @db.VarChar
+  institution            String? @db.VarChar
+  field_of_study         String? @db.VarChar
+  final_evaluation_grade String? @db.VarChar
+  start_date             String? @db.VarChar
+  year_of_completion     Int?
+  resume_id              Int?
+  resume                 resume? @relation(fields: [resume_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_education_id")
+}
+
+model experience {
+  id                Int     @id @default(autoincrement())
+  position          String? @db.VarChar
+  company           String? @db.VarChar
+  employment_period String? @db.VarChar
+  location          String? @db.VarChar
+  industry          String? @db.VarChar
+  resume_id         Int?
+  resume            resume? @relation(fields: [resume_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_experience_id")
+}
+
+model legal_authorization {
+  id                                Int          @id @default(autoincrement())
+  eu_work_authorization             String?      @db.VarChar
+  us_work_authorization             String?      @db.VarChar
+  requires_us_visa                  String?      @db.VarChar
+  legally_allowed_to_work_in_us     String?      @db.VarChar
+  requires_us_sponsorship           String?      @db.VarChar
+  requires_eu_visa                  String?      @db.VarChar
+  legally_allowed_to_work_in_eu     String?      @db.VarChar
+  requires_eu_sponsorship           String?      @db.VarChar
+  canada_work_authorization         String?      @db.VarChar
+  requires_canada_visa              String?      @db.VarChar
+  legally_allowed_to_work_in_canada String?      @db.VarChar
+  requires_canada_sponsorship       String?      @db.VarChar
+  uk_work_authorization             String?      @db.VarChar
+  requires_uk_visa                  String?      @db.VarChar
+  legally_allowed_to_work_in_uk     String?      @db.VarChar
+  requires_uk_sponsorship           String?      @db.VarChar
+  application_id                    Int?
+  applications                      Application? @relation(fields: [application_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_legal_authorization_id")
+}
+
+model personal_information {
+  id            Int      @id @default(autoincrement())
+  name          String?  @db.VarChar
+  surname       String?  @db.VarChar
+  date_of_birth String?  @db.VarChar
+  country       String?  @db.VarChar
+  city          String?  @db.VarChar
+  address       String?  @db.VarChar
+  zip_code      String?  @db.VarChar
+  phone_prefix  String?  @db.VarChar
+  phone         String?  @db.VarChar
+  email         String?  @db.VarChar
+  github        String?  @db.VarChar
+  linkedin      String?  @db.VarChar
+  resume        resume[]
+
+  @@index([id], map: "ix_personal_information_id")
+}
+
+model resume {
+  id                      Int                   @id @default(autoincrement())
+  personal_information_id Int?
+  certification           certification[]
+  education               education[]
+  experience              experience[]
+  personal_information    personal_information? @relation(fields: [personal_information_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_resume_id")
+}
+
+model self_identification {
+  id             Int          @id @default(autoincrement())
+  gender         String?      @db.VarChar
+  pronouns       String?      @db.VarChar
+  veteran        String?      @db.VarChar
+  disability     String?      @db.VarChar
+  ethnicity      String?      @db.VarChar
+  application_id Int?
+  applications   Application? @relation(fields: [application_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_self_identification_id")
+}
+
+model work_preferences {
+  id                                   Int          @id @default(autoincrement())
+  remote_work                          String?      @db.VarChar
+  in_person_work                       String?      @db.VarChar
+  open_to_relocation                   String?      @db.VarChar
+  willing_to_complete_assessments      String?      @db.VarChar
+  willing_to_undergo_drug_tests        String?      @db.VarChar
+  willing_to_undergo_background_checks String?      @db.VarChar
+  application_id                       Int?
+  applications                         Application? @relation(fields: [application_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([id], map: "ix_work_preferences_id")
+}
+
+model job_descriptions {
+  id                    String    @id @db.Uuid
+  title                 String    @db.VarChar
+  company               String    @db.VarChar
+  summary               String    @db.VarChar
+  responsibility_duties String    @db.VarChar
+  qualification_skills  Json      @db.Json
+  work_environment      String    @db.VarChar
+  salary_benefits       String    @db.VarChar
+  created_at            DateTime? @db.Timestamp(6)
+  updated_at            DateTime? @db.Timestamp(6)
+}
+
+enum employmenttype {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  TEMPORARY
+  INTERNSHIP
+}

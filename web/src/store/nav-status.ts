@@ -1,13 +1,13 @@
 import { create } from 'zustand'
 
-interface TotalCountState {
+interface NavStatusState {
   total: number
   setTotal: (count: number) => void
   increaseTotal: () => void
   decreaseTotal: () => void
 }
 
-export const useTotalCount = create<TotalCountState>((set) => ({
+export const useNavStatus = create<NavStatusState>((set) => ({
   total: 1,
   setTotal: (count) => set({ total: count }),
   increaseTotal: () => set((state) => ({ total: state.total + 1 })),

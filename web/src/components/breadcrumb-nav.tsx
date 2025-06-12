@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { usePathname } from "next/navigation";
+import { usePathname } from 'next/navigation'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,14 +8,14 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { generateBreadcrumbs } from "@/lib/breadcrumbs";
+} from '@/components/ui/breadcrumb'
+import { generateBreadcrumbs } from '@/lib/breadcrumbs'
 
 export function BreadcrumbNav() {
-  const pathname = usePathname();
-  const breadcrumbs = generateBreadcrumbs(pathname);
+  const pathname = usePathname()
+  const breadcrumbs = generateBreadcrumbs(pathname)
 
-  if (breadcrumbs.length === 0) return null;
+  if (breadcrumbs.length === 0) return null
 
   return (
     <Breadcrumb>
@@ -32,5 +32,5 @@ export function BreadcrumbNav() {
         ))}
       </BreadcrumbList>
     </Breadcrumb>
-  );
+  )
 }

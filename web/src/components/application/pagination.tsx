@@ -1,33 +1,33 @@
-"use client";
+'use client'
 
-import { Table } from "@tanstack/react-table";
+import { Table } from '@tanstack/react-table'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/select'
+import { Button } from '@/components/ui/button'
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
   ChevronsLeftIcon,
   ChevronsRightIcon,
-} from "lucide-react";
+} from 'lucide-react'
 
 interface PaginationData {
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+  total: number
+  page: number
+  limit: number
+  totalPages: number
 }
 
 interface DataTablePaginationProps<TData> {
-  table: Table<TData>;
-  pagination: PaginationData;
-  onPageChange: (page: number) => void;
-  onLimitChange: (limit: number) => void;
+  table: Table<TData>
+  pagination: PaginationData
+  onPageChange: (page: number) => void
+  onLimitChange: (limit: number) => void
 }
 
 export function DataTablePagination<TData>({
@@ -46,8 +46,8 @@ export function DataTablePagination<TData>({
           <Select
             value={`${pagination.limit}`}
             onValueChange={(value) => {
-              onLimitChange(Number(value));
-              onPageChange(1);
+              onLimitChange(Number(value))
+              onPageChange(1)
             }}
           >
             <SelectTrigger className="h-8 w-[70px]">
@@ -105,5 +105,5 @@ export function DataTablePagination<TData>({
         </div>
       </div>
     </div>
-  );
+  )
 }

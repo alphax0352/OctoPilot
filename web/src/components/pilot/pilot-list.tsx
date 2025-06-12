@@ -1,67 +1,48 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  Trash2,
-  Pencil,
-  Loader2Icon,
-  Mail,
-  Layers,
-  WholeWord,
-  Play,
-} from "lucide-react";
-import { EditPilotDialog } from "./edit-pilot-dialog";
-import { useToast } from "@/hooks/use-toast";
-import { SavedPilot } from "@/types/client";
-import { useDeletePilot, useGetPilotsInfinite } from "@/hooks/use-pilot";
-import { useTotalCount } from "@/store/total-count";
-import { Skeleton } from "../ui/skeleton";
+import { useEffect, useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Trash2, Pencil, Loader2Icon, Mail, Layers, WholeWord, Play } from 'lucide-react'
+import { EditPilotDialog } from './edit-pilot-dialog'
+import { useToast } from '@/hooks/use-toast'
+import { SavedPilot } from '@/types/client'
+import { useDeletePilot, useGetPilotsInfinite } from '@/hooks/use-pilot'
+import { useTotalCount } from '@/store/total-count'
+import { Skeleton } from '../ui/skeleton'
 
 export function PilotList() {
-  const { toast } = useToast();
-  const [editingPilot, setEditingPilot] = useState<SavedPilot | null>(null);
-  const { total } = useTotalCount();
+  const { toast } = useToast()
+  const [editingPilot, setEditingPilot] = useState<SavedPilot | null>(null)
+  const { total } = useTotalCount()
 
-  const LIMIT = 5;
+  const LIMIT = 5
 
-  const {
-    data: pilotsData,
-    fetchNextPage,
-    isFetching,
-    isLoading,
-  } = useGetPilotsInfinite(LIMIT);
+  const { data: pilotsData, fetchNextPage, isFetching, isLoading } = useGetPilotsInfinite(LIMIT)
   const {
     mutate: deletePilot,
     isSuccess: pilotHasBeenDeleted,
     isPending: isDeletingPilot,
     isError: deletePilotError,
-  } = useDeletePilot();
+  } = useDeletePilot()
 
   useEffect(() => {
     if (pilotHasBeenDeleted) {
       toast({
-        title: "Pilot deleted",
-        description: "Your pilot has been deleted.",
-      });
+        title: 'Pilot deleted',
+        description: 'Your pilot has been deleted.',
+      })
     }
-  }, [pilotHasBeenDeleted]);
+  }, [pilotHasBeenDeleted])
 
   useEffect(() => {
     if (deletePilotError) {
       toast({
-        title: "Error",
-        description: "There was an error deleting your pilot.",
-      });
+        title: 'Error',
+        description: 'There was an error deleting your pilot.',
+      })
     }
-  }, [deletePilotError]);
+  }, [deletePilotError])
 
   if (isLoading) {
     return (
@@ -84,20 +65,18 @@ export function PilotList() {
           </Card>
         ))}
       </div>
-    );
+    )
   }
 
-  const pilots = pilotsData?.pages.flatMap((page) => page) || [];
+  const pilots = pilotsData?.pages.flatMap((page) => page) || []
 
   if (pilots.length === 0) {
     return (
       <div className="rounded-lg border border-dashed p-8 text-center">
         <h3 className="text-lg font-semibold mb-2">No pilots scheduled</h3>
-        <p className="text-muted-foreground">
-          Create your first pilot to get started
-        </p>
+        <p className="text-muted-foreground">Create your first pilot to get started</p>
       </div>
-    );
+    )
   }
 
   return (
@@ -163,8 +142,8 @@ export function PilotList() {
                   </div>
                 </div>
               </Card>
-            );
-          });
+            )
+          })
         })}
       </div>
 
@@ -179,7 +158,7 @@ export function PilotList() {
             <Button
               variant="outline"
               onClick={() => {
-                fetchNextPage();
+                fetchNextPage()
               }}
             >
               Show More
@@ -199,5 +178,5 @@ export function PilotList() {
         />
       )}
     </>
-  );
+  )
 }

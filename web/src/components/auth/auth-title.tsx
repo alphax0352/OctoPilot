@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from 'next/image'
 
 export function AuthTitle() {
   return (
@@ -6,5 +6,5 @@ export function AuthTitle() {
       <Image src="/images/logo.png" alt="Octopilot" width={36} height={36} />
       <div className="font-bold text-2xl">Octopilot</div>
     </div>
-  );
+  )
 }

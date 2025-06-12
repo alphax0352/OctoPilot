@@ -1,38 +1,25 @@
-"use client";
+'use client'
 
-import {
-  Application,
-  ApplicationStatus,
-  applicationStatusSchema,
-} from "@/types/client";
-import { ColumnDef } from "@tanstack/react-table";
-import { Checkbox } from "../ui/checkbox";
-import { DataTableColumnHeader } from "./column-header";
-import { JobDescription } from "./job-description";
-import { CoverLetter } from "./cover-letter";
-import Link from "next/link";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Application, ApplicationStatus, applicationStatusSchema } from '@/types/client'
+import { ColumnDef } from '@tanstack/react-table'
+import { Checkbox } from '../ui/checkbox'
+import { DataTableColumnHeader } from './column-header'
+import { JobDescription } from './job-description'
+import { CoverLetter } from './cover-letter'
+import Link from 'next/link'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
 interface ColumnProps {
-  onStatusChange?: (id: number, status: ApplicationStatus) => void;
+  onStatusChange?: (id: number, status: ApplicationStatus) => void
 }
 
-export const createColumns = ({
-  onStatusChange,
-}: ColumnProps = {}): ColumnDef<Application>[] => [
+export const createColumns = ({ onStatusChange }: ColumnProps = {}): ColumnDef<Application>[] => [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) => (
       <Checkbox
         checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
+          table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
@@ -49,108 +36,88 @@ export const createColumns = ({
     enableHiding: false,
   },
   {
-    accessorKey: "id",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="ID" />
-    ),
+    accessorKey: 'id',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="ID" />,
     cell: ({ row }) => {
-      return <div className="text-left font-medium">{row.getValue("id")}</div>;
+      return <div className="text-left font-medium">{row.getValue('id')}</div>
     },
   },
   {
-    accessorKey: "title",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Title" />
-    ),
+    accessorKey: 'title',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Title" />,
     cell: ({ row }) => {
       return (
-        <div className="text-left font-medium line-clamp-1 min-w-48">
-          {row.getValue("title")}
-        </div>
-      );
+        <div className="text-left font-medium line-clamp-1 min-w-48">{row.getValue('title')}</div>
+      )
     },
   },
   {
-    accessorKey: "company",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Company" />
-    ),
+    accessorKey: 'company',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Company" />,
     cell: ({ row }) => {
-      return (
-        <div className="text-left font-medium">{row.getValue("company")}</div>
-      );
+      return <div className="text-left font-medium">{row.getValue('company')}</div>
     },
   },
   {
-    accessorKey: "description",
-    header: "Description",
+    accessorKey: 'description',
+    header: 'Description',
     cell: ({ row }) => {
       return (
         <JobDescription
-          company={row.getValue("company")}
-          title={row.getValue("title")}
-          description={row.getValue("description")}
+          company={row.getValue('company')}
+          title={row.getValue('title')}
+          description={row.getValue('description')}
         />
-      );
+      )
     },
   },
   {
-    accessorKey: "coverLetter",
-    header: "Cover Letter",
+    accessorKey: 'coverLetter',
+    header: 'Cover Letter',
     cell: ({ row }) => {
-      return row.getValue("coverLetter") ? (
-        <CoverLetter coverLetter={row.getValue("coverLetter")} />
+      return row.getValue('coverLetter') ? (
+        <CoverLetter coverLetter={row.getValue('coverLetter')} />
       ) : (
         <div className="text-left font-medium">N/A</div>
-      );
+      )
     },
   },
   {
-    accessorKey: "resumePath",
-    header: "Resume",
+    accessorKey: 'resumePath',
+    header: 'Resume',
     cell: ({ row }) => {
-      return row.getValue("resumePath") ? (
-        <Link href={row.getValue("resumePath")} target="_blank">
+      return row.getValue('resumePath') ? (
+        <Link href={row.getValue('resumePath')} target="_blank">
           <div className="line-clamp-1 underline">View</div>
         </Link>
       ) : (
         <div className="text-left font-medium">N/A</div>
-      );
+      )
     },
   },
   {
-    accessorKey: "createdAt",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Applied At" />
-    ),
+    accessorKey: 'createdAt',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Applied At" />,
     cell: ({ row }) => {
-      return (
-        <div className="text-left font-medium">{row.getValue("createdAt")}</div>
-      );
+      return <div className="text-left font-medium">{row.getValue('createdAt')}</div>
     },
   },
   {
-    accessorKey: "updatedAt",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Updated At" />
-    ),
+    accessorKey: 'updatedAt',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Updated At" />,
     cell: ({ row }) => {
-      return (
-        <div className="text-left font-medium">{row.getValue("updatedAt")}</div>
-      );
+      return <div className="text-left font-medium">{row.getValue('updatedAt')}</div>
     },
   },
   {
-    accessorKey: "status",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
-    ),
+    accessorKey: 'status',
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
     cell: ({ row }) => {
       return (
         <Select
-          defaultValue={row.getValue("status")}
+          defaultValue={row.getValue('status')}
           onValueChange={(value) => {
-            onStatusChange?.(row.original.id, value as ApplicationStatus);
+            onStatusChange?.(row.original.id, value as ApplicationStatus)
           }}
         >
           <SelectTrigger>
@@ -164,7 +131,7 @@ export const createColumns = ({
             ))}
           </SelectContent>
         </Select>
-      );
+      )
     },
   },
-];
+]

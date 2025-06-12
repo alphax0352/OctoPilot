@@ -1,5 +1,5 @@
-import { PilotForm } from "@/components/pilot/pilot-form";
-import { PilotList } from "@/components/pilot/pilot-list";
+import { PilotForm } from '@/components/pilot/pilot-form'
+import { PilotList } from '@/components/pilot/pilot-list'
 
 export default function PilotPage() {
   return (
@@ -25,5 +25,5 @@ export default function PilotPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

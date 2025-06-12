@@ -1,8 +1,8 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Save, Trash2 } from "lucide-react";
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Save, Trash2 } from 'lucide-react'
 
 import {
   ColumnFiltersState,
@@ -14,7 +14,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table'
 
 import {
   Table,
@@ -23,50 +23,40 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Input } from "../ui/input";
-import { DataTablePagination } from "./pagination";
-import { DataTableViewOptions } from "./column-toggle";
-import { Skeleton } from "../ui/skeleton";
-import { Button } from "../ui/button";
-import { useToast } from "@/hooks/use-toast";
-import {
-  Application,
-  ApplicationStatus,
-  applicationStatusSchema,
-} from "@/types/client";
-import { AxiosInstance } from "@/lib/axios-instance";
-import { createColumns } from "./columns";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+} from '@/components/ui/table'
+import { Input } from '../ui/input'
+import { DataTablePagination } from './pagination'
+import { DataTableViewOptions } from './column-toggle'
+import { Skeleton } from '../ui/skeleton'
+import { Button } from '../ui/button'
+import { useToast } from '@/hooks/use-toast'
+import { Application, ApplicationStatus, applicationStatusSchema } from '@/types/client'
+import { AxiosInstance } from '@/lib/axios-instance'
+import { createColumns } from './columns'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
 interface PaginationData {
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+  total: number
+  page: number
+  limit: number
+  totalPages: number
 }
 
 interface Filters {
-  company: string;
-  status: string;
+  company: string
+  status: string
 }
 
 interface DataTableProps {
-  data: Application[];
-  pagination: PaginationData;
-  onPageChange: (page: number) => void;
-  onLimitChange: (limit: number) => void;
-  isLoading?: boolean;
-  onStatusChange?: (id: number, status: ApplicationStatus) => void;
-  onDataChange?: (data: Application[]) => void;
-  filters: Filters;
-  onFilterChange: (filters: Filters) => void;
+  data: Application[]
+  pagination: PaginationData
+  onPageChange: (page: number) => void
+  onLimitChange: (limit: number) => void
+  isLoading?: boolean
+  onStatusChange?: (id: number, status: ApplicationStatus) => void
+  onDataChange?: (data: Application[]) => void
+  filters: Filters
+  onFilterChange: (filters: Filters) => void
 }
 
 export function DataTable({
@@ -80,28 +70,26 @@ export function DataTable({
   filters,
   onFilterChange,
 }: DataTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = useState({});
-  const [hasStatusChanges, setHasStatusChanges] = useState(false);
-  const [statusChanges, setStatusChanges] = useState<
-    Map<number, ApplicationStatus>
-  >(new Map());
-  const router = useRouter();
-  const { toast } = useToast();
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = useState({})
+  const [hasStatusChanges, setHasStatusChanges] = useState(false)
+  const [statusChanges, setStatusChanges] = useState<Map<number, ApplicationStatus>>(new Map())
+  const router = useRouter()
+  const { toast } = useToast()
 
   const columns = createColumns({
     onStatusChange: (id, status) => {
-      onStatusChange?.(id, status);
+      onStatusChange?.(id, status)
       setStatusChanges((prev) => {
-        const next = new Map(prev);
-        next.set(id, status);
-        return next;
-      });
-      setHasStatusChanges(true);
+        const next = new Map(prev)
+        next.set(id, status)
+        return next
+      })
+      setHasStatusChanges(true)
     },
-  });
+  })
 
   const table = useReactTable({
     data,
@@ -122,61 +110,59 @@ export function DataTable({
     },
     pageCount: pagination.totalPages,
     manualPagination: true,
-  });
+  })
 
   const handleSaveStatus = async () => {
     try {
-      const updates = Array.from(statusChanges.entries()).map(
-        ([id, status]) => ({
-          id,
-          status,
-        }),
-      );
+      const updates = Array.from(statusChanges.entries()).map(([id, status]) => ({
+        id,
+        status,
+      }))
 
-      await AxiosInstance.put("/api/application", updates);
+      await AxiosInstance.put('/api/application', updates)
 
-      setHasStatusChanges(false);
-      setStatusChanges(new Map());
-      router.refresh();
+      setHasStatusChanges(false)
+      setStatusChanges(new Map())
+      router.refresh()
       toast({
-        title: "Success",
-        description: "Status updated successfully",
-      });
+        title: 'Success',
+        description: 'Status updated successfully',
+      })
     } catch (error) {
-      console.error("Error saving status:", error);
+      console.error('Error saving status:', error)
       toast({
-        title: "Error",
-        description: "Failed to update status",
-        variant: "destructive",
-      });
+        title: 'Error',
+        description: 'Failed to update status',
+        variant: 'destructive',
+      })
     }
-  };
+  }
 
   const handleDelete = async () => {
     try {
-      const selectedRows = table.getSelectedRowModel().rows;
-      const ids = selectedRows.map((row) => row.original.id);
+      const selectedRows = table.getSelectedRowModel().rows
+      const ids = selectedRows.map((row) => row.original.id)
 
-      await AxiosInstance.delete(`/api/application?ids=${ids.join(",")}`);
+      await AxiosInstance.delete(`/api/application?ids=${ids.join(',')}`)
 
       // Update local data state
-      const updatedData = data.filter((app) => !ids.includes(app.id));
-      onDataChange?.(updatedData);
+      const updatedData = data.filter((app) => !ids.includes(app.id))
+      onDataChange?.(updatedData)
 
-      setRowSelection({});
+      setRowSelection({})
       toast({
-        title: "Success",
-        description: "Applications deleted successfully",
-      });
+        title: 'Success',
+        description: 'Applications deleted successfully',
+      })
     } catch (error) {
-      console.error("Error deleting applications:", error);
+      console.error('Error deleting applications:', error)
       toast({
-        title: "Error",
-        description: "Failed to delete applications",
-        variant: "destructive",
-      });
+        title: 'Error',
+        description: 'Failed to delete applications',
+        variant: 'destructive',
+      })
     }
-  };
+  }
 
   return (
     <div className="flex flex-col gap-4 mt-4">
@@ -185,17 +171,15 @@ export function DataTable({
           <Input
             placeholder="Filter Companies..."
             value={filters.company}
-            onChange={(event) =>
-              onFilterChange({ ...filters, company: event.target.value })
-            }
+            onChange={(event) => onFilterChange({ ...filters, company: event.target.value })}
             className="max-w-sm"
           />
           <Select
-            value={filters.status || "all"}
+            value={filters.status || 'all'}
             onValueChange={(value) =>
               onFilterChange({
                 ...filters,
-                status: value === "all" ? "" : value,
+                status: value === 'all' ? '' : value,
               })
             }
           >
@@ -225,12 +209,7 @@ export function DataTable({
             </Button>
           )}
           {Object.keys(rowSelection).length > 0 && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-red-600"
-              onClick={handleDelete}
-            >
+            <Button variant="outline" size="sm" className="text-red-600" onClick={handleDelete}>
               <Trash2 className="h-4 w-4" />
               Delete Selected
             </Button>
@@ -248,12 +227,9 @@ export function DataTable({
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
-                  );
+                  )
                 })}
               </TableRow>
             ))}
@@ -271,26 +247,17 @@ export function DataTable({
               ))
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>
@@ -305,5 +272,5 @@ export function DataTable({
         onLimitChange={onLimitChange}
       />
     </div>
-  );
+  )
 }

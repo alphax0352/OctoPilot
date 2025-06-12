@@ -1,25 +1,25 @@
-import { AxiosInstance } from "@/lib/axios-instance";
-import { User } from "@/types/client";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { AxiosInstance } from '@/lib/axios-instance'
+import { User } from '@/types/client'
+import { useMutation, useQuery } from '@tanstack/react-query'
 
 export const useUserSearch = (query: string) => {
   return useQuery<User[]>({
-    queryKey: ["searchUsers", query],
+    queryKey: ['searchUsers', query],
     queryFn: async () => {
-      const { data } = await AxiosInstance.get("/api/user", {
+      const { data } = await AxiosInstance.get('/api/user', {
         params: { search: query },
-      });
-      return data;
+      })
+      return data
     },
     refetchInterval: 5000,
-  });
-};
+  })
+}
 
 export const useDeleteUser = () => {
   return useMutation({
     mutationFn: async () => {
-      const { data } = await AxiosInstance.delete("/api/user");
-      return data;
+      const { data } = await AxiosInstance.delete('/api/user')
+      return data
     },
-  });
-};
+  })
+}

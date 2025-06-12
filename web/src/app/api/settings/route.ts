@@ -1,13 +1,13 @@
-import { NextResponse } from "next/server";
-import prisma from "@/../prisma/client";
-import { getUser } from "@/lib/auth";
-import { EmploymentHistory } from "@/types/server";
+import { NextResponse } from 'next/server'
+import prisma from '@/../prisma/client'
+import { getUser } from '@/lib/auth'
+import { EmploymentHistory } from '@/types/server'
 
 export async function GET() {
   try {
-    const session = await getUser();
+    const session = await getUser()
     if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
     const user = await prisma.user.findUnique({
@@ -17,43 +17,41 @@ export async function GET() {
         employmentHistory: true,
         educationInfo: true,
       },
-    });
+    })
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
     const mainInfo = {
-      name: user.mainInfo?.name || "",
-      email: user.mainInfo?.email || "",
-      phone: user.mainInfo?.phone || "",
-      location: user.mainInfo?.location || "",
-      linkedin: user.mainInfo?.linkedin || "",
-    };
+      name: user.mainInfo?.name || '',
+      email: user.mainInfo?.email || '',
+      phone: user.mainInfo?.phone || '',
+      location: user.mainInfo?.location || '',
+      linkedin: user.mainInfo?.linkedin || '',
+    }
 
-    const employmentHistory = user.employmentHistory.map(
-      (history: EmploymentHistory) => ({
-        company: history.company || "",
-        title: history.title || "",
-        from: history.from || "",
-        to: history.to || "",
-        location: history.location || "",
-        description: history.description || "",
-        // projects: history.projects || "",
-      }),
-    );
+    const employmentHistory = user.employmentHistory.map((history: EmploymentHistory) => ({
+      company: history.company || '',
+      title: history.title || '',
+      from: history.from || '',
+      to: history.to || '',
+      location: history.location || '',
+      description: history.description || '',
+      // projects: history.projects || "",
+    }))
 
     const educationInfo = {
-      school: user.educationInfo?.school || "",
-      degree: user.educationInfo?.degree || "",
-      from: user.educationInfo?.from || "",
-      to: user.educationInfo?.to || "",
-      location: user.educationInfo?.location || "",
-    };
+      school: user.educationInfo?.school || '',
+      degree: user.educationInfo?.degree || '',
+      from: user.educationInfo?.from || '',
+      to: user.educationInfo?.to || '',
+      location: user.educationInfo?.location || '',
+    }
 
-    const resumeWriterPrompt = user.resumeWriterPrompt || "";
-    const coverLetterPrompt = user.coverLetterPrompt || "";
-    const resumeTemplatePath = user.resumeTemplatePath || "";
+    const resumeWriterPrompt = user.resumeWriterPrompt || ''
+    const coverLetterPrompt = user.coverLetterPrompt || ''
+    const resumeTemplatePath = user.resumeTemplatePath || ''
 
     return NextResponse.json({
       mainInfo,
@@ -62,24 +60,21 @@ export async function GET() {
       resumeWriterPrompt,
       coverLetterPrompt,
       resumeTemplatePath,
-    });
+    })
   } catch (error) {
-    console.error("Error fetching settings:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
+    console.error('Error fetching settings:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
 export async function PUT(request: Request) {
   try {
-    const session = await getUser();
+    const session = await getUser()
     if (!session) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json();
+    const body = await request.json()
     const {
       mainInfo,
       employmentHistory,
@@ -87,14 +82,14 @@ export async function PUT(request: Request) {
       resumeWriterPrompt,
       coverLetterPrompt,
       resumeTemplatePath,
-    } = body;
+    } = body
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
-    });
+    })
 
     if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
     // Update or create main info
@@ -103,7 +98,7 @@ export async function PUT(request: Request) {
         where: { userId: user.id },
         update: mainInfo,
         create: { ...mainInfo, userId: user.id },
-      });
+      })
     }
 
     // Update or create education info
@@ -112,7 +107,7 @@ export async function PUT(request: Request) {
         where: { userId: user.id },
         update: educationInfo,
         create: { ...educationInfo, userId: user.id },
-      });
+      })
     }
 
     // Update employment history
@@ -120,7 +115,7 @@ export async function PUT(request: Request) {
       // Delete existing employment history
       await prisma.employmentHistory.deleteMany({
         where: { userId: user.id },
-      });
+      })
 
       // Create new employment history entries
       await prisma.employmentHistory.createMany({
@@ -128,7 +123,7 @@ export async function PUT(request: Request) {
           ...item,
           userId: user.id,
         })),
-      });
+      })
     }
 
     // Update user settings
@@ -139,14 +134,11 @@ export async function PUT(request: Request) {
         coverLetterPrompt,
         resumeTemplatePath,
       },
-    });
+    })
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("Error updating settings:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
+    console.error('Error updating settings:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

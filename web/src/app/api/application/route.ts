@@ -1,22 +1,22 @@
-import { NextResponse } from "next/server";
-import prisma from "@/../prisma/client";
-import { applicationSchema, Application } from "@/types/server";
-import { getServerSession } from "next-auth";
-import { authConfig } from "@/lib/auth";
+import { NextResponse } from 'next/server'
+import prisma from '@/../prisma/client'
+import { applicationSchema, Application } from '@/types/server'
+import { getServerSession } from 'next-auth'
+import { authConfig } from '@/lib/auth'
 
 export async function GET(request: Request) {
   try {
-    const session = await getServerSession(authConfig);
+    const session = await getServerSession(authConfig)
     if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "10");
-    const skip = (page - 1) * limit;
-    const company = searchParams.get("company") || "";
-    const status = searchParams.get("status") || "";
+    const { searchParams } = new URL(request.url)
+    const page = parseInt(searchParams.get('page') || '1')
+    const limit = parseInt(searchParams.get('limit') || '10')
+    const skip = (page - 1) * limit
+    const company = searchParams.get('company') || ''
+    const status = searchParams.get('status') || ''
 
     const where = {
       user: {
@@ -25,13 +25,13 @@ export async function GET(request: Request) {
       ...(company && {
         company: {
           contains: company,
-          mode: "insensitive",
+          mode: 'insensitive',
         },
       }),
       ...(status && {
         status,
       }),
-    };
+    }
 
     const [applications, total] = await Promise.all([
       prisma.application.findMany({
@@ -39,13 +39,13 @@ export async function GET(request: Request) {
         skip,
         take: limit,
         orderBy: {
-          createdAt: "desc",
+          createdAt: 'desc',
         },
       }),
       prisma.application.count({
         where,
       }),
-    ]);
+    ])
 
     const validatedApplications = applications.map((app: Application) =>
       applicationSchema.parse({
@@ -58,8 +58,8 @@ export async function GET(request: Request) {
         createdAt: app.createdAt,
         updatedAt: app.updatedAt,
         status: app.status,
-      }),
-    );
+      })
+    )
 
     return NextResponse.json({
       data: validatedApplications,
@@ -69,31 +69,28 @@ export async function GET(request: Request) {
         limit,
         totalPages: Math.ceil(total / limit),
       },
-    });
+    })
   } catch (error) {
-    console.error("Error fetching applications:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch applications" },
-      { status: 500 },
-    );
+    console.error('Error fetching applications:', error)
+    return NextResponse.json({ error: 'Failed to fetch applications' }, { status: 500 })
   }
 }
 
 export async function PUT(request: Request) {
   try {
-    const session = await getServerSession(authConfig);
+    const session = await getServerSession(authConfig)
     if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json();
+    const body = await request.json()
 
     // Handle bulk update
     if (Array.isArray(body)) {
       const updates = body.map(({ id, status }) => ({
         id: Number(id),
         status,
-      }));
+      }))
 
       await prisma.application.updateMany({
         where: {
@@ -107,13 +104,13 @@ export async function PUT(request: Request) {
         data: {
           status: updates[0].status, // This is a limitation of Prisma's updateMany
         },
-      });
+      })
 
-      return NextResponse.json({ success: true });
+      return NextResponse.json({ success: true })
     }
 
     // Handle single update
-    const { id, status } = body;
+    const { id, status } = body
     const updatedApplication = await prisma.application.update({
       where: {
         id: Number(id),
@@ -124,33 +121,27 @@ export async function PUT(request: Request) {
       data: {
         status,
       },
-    });
+    })
 
-    return NextResponse.json(updatedApplication);
+    return NextResponse.json(updatedApplication)
   } catch (error) {
-    console.error("Error updating application:", error);
-    return NextResponse.json(
-      { error: "Failed to update application" },
-      { status: 500 },
-    );
+    console.error('Error updating application:', error)
+    return NextResponse.json({ error: 'Failed to update application' }, { status: 500 })
   }
 }
 
 export async function DELETE(request: Request) {
   try {
-    const session = await getServerSession(authConfig);
+    const session = await getServerSession(authConfig)
     if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { searchParams } = new URL(request.url);
-    const ids = searchParams.get("ids")?.split(",").map(Number);
+    const { searchParams } = new URL(request.url)
+    const ids = searchParams.get('ids')?.split(',').map(Number)
 
     if (!ids?.length) {
-      return NextResponse.json(
-        { error: "No application IDs provided" },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: 'No application IDs provided' }, { status: 400 })
     }
 
     await prisma.application.deleteMany({
@@ -162,14 +153,11 @@ export async function DELETE(request: Request) {
           email: session.user.email,
         },
       },
-    });
+    })
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("Error deleting applications:", error);
-    return NextResponse.json(
-      { error: "Failed to delete applications" },
-      { status: 500 },
-    );
+    console.error('Error deleting applications:', error)
+    return NextResponse.json({ error: 'Failed to delete applications' }, { status: 500 })
   }
 }

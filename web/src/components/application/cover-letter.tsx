@@ -1,10 +1,5 @@
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { ScrollArea } from "../ui/scroll-area";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
+import { ScrollArea } from '../ui/scroll-area'
 
 export function CoverLetter({ coverLetter }: { coverLetter: string }) {
   return (
@@ -19,5 +14,5 @@ export function CoverLetter({ coverLetter }: { coverLetter: string }) {
         </ScrollArea>
       </SheetContent>
     </Sheet>
-  );
+  )
 }

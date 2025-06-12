@@ -1,76 +1,74 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { Save, Download, Upload } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
-import { EducationInfo, EmploymentHistory, MainInfo } from "@/types/client";
-import { AxiosInstance } from "@/lib/axios-instance";
-import ResumeTab from "@/components/settings/resume-tab";
-import VaiTab from "@/components/settings/vai-tab";
-import { encodeBase64, decodeBase64 } from "@/lib/base64";
+import { useState, useEffect } from 'react'
+import { Save, Download, Upload } from 'lucide-react'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
+import { toast } from '@/hooks/use-toast'
+import { EducationInfo, EmploymentHistory, MainInfo } from '@/types/client'
+import { AxiosInstance } from '@/lib/axios-instance'
+import ResumeTab from '@/components/settings/resume-tab'
+import VaiTab from '@/components/settings/vai-tab'
+import { encodeBase64, decodeBase64 } from '@/lib/base64'
 
 export default function SettingsPage() {
   const [mainInfo, setMainInfo] = useState<MainInfo>({
-    name: "",
-    email: "",
-    phone: "",
-    location: "",
-    linkedin: "",
-  });
-  const [employmentHistory, setEmploymentHistory] = useState<
-    EmploymentHistory[]
-  >([]);
+    name: '',
+    email: '',
+    phone: '',
+    location: '',
+    linkedin: '',
+  })
+  const [employmentHistory, setEmploymentHistory] = useState<EmploymentHistory[]>([])
   const [educationInfo, setEducationInfo] = useState<EducationInfo>({
-    school: "",
-    degree: "",
-    from: "",
-    to: "",
-    location: "",
-  });
-  const [resumeWriterPrompt, setResumeWriterPrompt] = useState<string>("");
-  const [coverLetterPrompt, setCoverLetterPrompt] = useState<string>("");
-  const [resumeTemplatePath, setResumeTemplatePath] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
+    school: '',
+    degree: '',
+    from: '',
+    to: '',
+    location: '',
+  })
+  const [resumeWriterPrompt, setResumeWriterPrompt] = useState<string>('')
+  const [coverLetterPrompt, setCoverLetterPrompt] = useState<string>('')
+  const [resumeTemplatePath, setResumeTemplatePath] = useState<string>('')
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSaving, setIsSaving] = useState(false)
+  const [hasChanges, setHasChanges] = useState(false)
 
   const [initialData, setInitialData] = useState<{
-    mainInfo: MainInfo;
-    employmentHistory: EmploymentHistory[];
-    educationInfo: EducationInfo;
-    resumeWriterPrompt: string;
-    coverLetterPrompt: string;
-    resumeTemplatePath: string;
+    mainInfo: MainInfo
+    employmentHistory: EmploymentHistory[]
+    educationInfo: EducationInfo
+    resumeWriterPrompt: string
+    coverLetterPrompt: string
+    resumeTemplatePath: string
   }>({
     mainInfo: {
-      name: "",
-      email: "",
-      phone: "",
-      location: "",
-      linkedin: "",
+      name: '',
+      email: '',
+      phone: '',
+      location: '',
+      linkedin: '',
     },
     employmentHistory: [],
     educationInfo: {
-      school: "",
-      degree: "",
-      from: "",
-      to: "",
-      location: "",
+      school: '',
+      degree: '',
+      from: '',
+      to: '',
+      location: '',
     },
-    resumeWriterPrompt: "",
-    coverLetterPrompt: "",
-    resumeTemplatePath: "",
-  });
+    resumeWriterPrompt: '',
+    coverLetterPrompt: '',
+    resumeTemplatePath: '',
+  })
 
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const { data } = await AxiosInstance.get("/api/settings");
+        const { data } = await AxiosInstance.get('/api/settings')
 
         // Format dates for employment history
-        const initialEmploymentHistory = data.employmentHistory || [];
+        const initialEmploymentHistory = data.employmentHistory || []
 
         // Format dates for education info
         const formattedEducationInfo = data.educationInfo
@@ -80,68 +78,62 @@ export default function SettingsPage() {
               to: data.educationInfo.to,
             }
           : {
-              school: "",
-              degree: "",
-              from: "",
-              to: "",
-              location: "",
-            };
+              school: '',
+              degree: '',
+              from: '',
+              to: '',
+              location: '',
+            }
 
         const initialMainInfo = data.mainInfo || {
-          name: "",
-          email: "",
-          phone: "",
-          location: "",
-          linkedin: "",
-        };
+          name: '',
+          email: '',
+          phone: '',
+          location: '',
+          linkedin: '',
+        }
 
-        setMainInfo(initialMainInfo);
-        setEmploymentHistory(initialEmploymentHistory);
-        setEducationInfo(formattedEducationInfo);
-        setResumeWriterPrompt(data.resumeWriterPrompt || "");
-        setCoverLetterPrompt(data.coverLetterPrompt || "");
-        setResumeTemplatePath(data.resumeTemplatePath || "");
+        setMainInfo(initialMainInfo)
+        setEmploymentHistory(initialEmploymentHistory)
+        setEducationInfo(formattedEducationInfo)
+        setResumeWriterPrompt(data.resumeWriterPrompt || '')
+        setCoverLetterPrompt(data.coverLetterPrompt || '')
+        setResumeTemplatePath(data.resumeTemplatePath || '')
 
         setInitialData({
           mainInfo: initialMainInfo,
           employmentHistory: initialEmploymentHistory,
           educationInfo: formattedEducationInfo,
-          resumeWriterPrompt: data.resumeWriterPrompt || "",
-          coverLetterPrompt: data.coverLetterPrompt || "",
-          resumeTemplatePath: data.resumeTemplatePath || "",
-        });
+          resumeWriterPrompt: data.resumeWriterPrompt || '',
+          coverLetterPrompt: data.coverLetterPrompt || '',
+          resumeTemplatePath: data.resumeTemplatePath || '',
+        })
       } catch (error) {
-        console.error("Error fetching settings:", error);
+        console.error('Error fetching settings:', error)
         toast({
-          title: "Error",
-          description: "Failed to load settings. Please try again.",
-          variant: "destructive",
-        });
+          title: 'Error',
+          description: 'Failed to load settings. Please try again.',
+          variant: 'destructive',
+        })
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
-    fetchSettings();
-  }, []);
+    fetchSettings()
+  }, [])
 
   useEffect(() => {
-    if (!initialData) return;
+    if (!initialData) return
 
-    const hasMainInfoChanges =
-      JSON.stringify(mainInfo) !== JSON.stringify(initialData.mainInfo);
+    const hasMainInfoChanges = JSON.stringify(mainInfo) !== JSON.stringify(initialData.mainInfo)
     const hasEmploymentChanges =
-      JSON.stringify(employmentHistory) !==
-      JSON.stringify(initialData.employmentHistory);
+      JSON.stringify(employmentHistory) !== JSON.stringify(initialData.employmentHistory)
     const hasEducationChanges =
-      JSON.stringify(educationInfo) !==
-      JSON.stringify(initialData.educationInfo);
-    const hasResumeWriterPromptChanges =
-      resumeWriterPrompt !== initialData.resumeWriterPrompt;
-    const hasCoverLetterPromptChanges =
-      coverLetterPrompt !== initialData.coverLetterPrompt;
-    const hasResumeTemplatePathChanges =
-      resumeTemplatePath !== initialData.resumeTemplatePath;
+      JSON.stringify(educationInfo) !== JSON.stringify(initialData.educationInfo)
+    const hasResumeWriterPromptChanges = resumeWriterPrompt !== initialData.resumeWriterPrompt
+    const hasCoverLetterPromptChanges = coverLetterPrompt !== initialData.coverLetterPrompt
+    const hasResumeTemplatePathChanges = resumeTemplatePath !== initialData.resumeTemplatePath
 
     setHasChanges(
       hasMainInfoChanges ||
@@ -149,8 +141,8 @@ export default function SettingsPage() {
         hasEducationChanges ||
         hasResumeWriterPromptChanges ||
         hasCoverLetterPromptChanges ||
-        hasResumeTemplatePathChanges,
-    );
+        hasResumeTemplatePathChanges
+    )
   }, [
     mainInfo,
     employmentHistory,
@@ -159,57 +151,53 @@ export default function SettingsPage() {
     coverLetterPrompt,
     resumeTemplatePath,
     initialData,
-  ]);
+  ])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
-        e.preventDefault(); // Prevent browser's default save dialog
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault() // Prevent browser's default save dialog
         if (hasChanges) {
-          handleSave();
+          handleSave()
         }
       }
-    };
+    }
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [hasChanges]); // Only re-run if hasChanges changes
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [hasChanges]) // Only re-run if hasChanges changes
 
   const handleMainInfoChange = (field: string, value: string) => {
-    setMainInfo((prev) => ({ ...prev, [field]: value }));
-  };
+    setMainInfo((prev) => ({ ...prev, [field]: value }))
+  }
 
-  const handleEmploymentHistoryChange = (
-    index: number,
-    field: string,
-    value: string,
-  ) => {
-    const newHistory = [...employmentHistory];
+  const handleEmploymentHistoryChange = (index: number, field: string, value: string) => {
+    const newHistory = [...employmentHistory]
     if (!newHistory[index]) {
       newHistory[index] = {
-        company: "",
-        title: "",
-        from: "",
-        to: "",
-        location: "",
-        description: "",
+        company: '',
+        title: '',
+        from: '',
+        to: '',
+        location: '',
+        description: '',
         // projects: "",
-      };
+      }
     }
-    newHistory[index] = { ...newHistory[index], [field]: value };
-    setEmploymentHistory(newHistory);
-    setHasChanges(true);
-  };
+    newHistory[index] = { ...newHistory[index], [field]: value }
+    setEmploymentHistory(newHistory)
+    setHasChanges(true)
+  }
 
   const handleEducationInfoChange = (field: string, value: string) => {
-    setEducationInfo((prev) => ({ ...prev, [field]: value }));
-    setHasChanges(true);
-  };
+    setEducationInfo((prev) => ({ ...prev, [field]: value }))
+    setHasChanges(true)
+  }
 
   const handleSave = async () => {
-    setIsSaving(true);
+    setIsSaving(true)
     try {
-      await AxiosInstance.put("/api/settings", {
+      await AxiosInstance.put('/api/settings', {
         mainInfo,
         employmentHistory: employmentHistory.map((item) => ({
           company: item.company,
@@ -228,7 +216,7 @@ export default function SettingsPage() {
         resumeWriterPrompt,
         coverLetterPrompt,
         resumeTemplatePath,
-      });
+      })
 
       setInitialData({
         mainInfo: { ...mainInfo },
@@ -237,24 +225,24 @@ export default function SettingsPage() {
         resumeWriterPrompt,
         coverLetterPrompt,
         resumeTemplatePath,
-      });
-      setHasChanges(false);
+      })
+      setHasChanges(false)
 
       toast({
-        title: "Success",
-        description: "Your settings have been saved successfully.",
-      });
+        title: 'Success',
+        description: 'Your settings have been saved successfully.',
+      })
     } catch (error) {
-      console.error("Error saving settings:", error);
+      console.error('Error saving settings:', error)
       toast({
-        title: "Error",
-        description: "Failed to save settings. Please try again.",
-        variant: "destructive",
-      });
+        title: 'Error',
+        description: 'Failed to save settings. Please try again.',
+        variant: 'destructive',
+      })
     } finally {
-      setIsSaving(false);
+      setIsSaving(false)
     }
-  };
+  }
 
   const handleExport = () => {
     const exportData = {
@@ -264,69 +252,68 @@ export default function SettingsPage() {
       resumeWriterPrompt: encodeBase64(resumeWriterPrompt),
       coverLetterPrompt: encodeBase64(coverLetterPrompt),
       resumeTemplatePath,
-    };
+    }
 
     const blob = new Blob([JSON.stringify(exportData, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "settings.json";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
+      type: 'application/json',
+    })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'settings.json'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
+  }
 
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    const file = event.target.files?.[0]
+    if (!file) return
 
-    const reader = new FileReader();
+    const reader = new FileReader()
     reader.onload = (e) => {
       try {
-        const data = JSON.parse(e.target?.result as string);
+        const data = JSON.parse(e.target?.result as string)
 
         // Validate the imported data structure
         if (!data.mainInfo || !data.employmentHistory || !data.educationInfo) {
-          throw new Error("Invalid settings file format");
+          throw new Error('Invalid settings file format')
         }
 
         // Update state with imported data
-        setMainInfo(data.mainInfo);
+        setMainInfo(data.mainInfo)
         setEmploymentHistory(
           data.employmentHistory.map((item: EmploymentHistory) => ({
             ...item,
             from: item.from,
             to: item.to,
-          })),
-        );
+          }))
+        )
         setEducationInfo({
           ...data.educationInfo,
           from: data.educationInfo.from,
           to: data.educationInfo.to,
-        });
-        setResumeWriterPrompt(decodeBase64(data.resumeWriterPrompt || ""));
-        setCoverLetterPrompt(decodeBase64(data.coverLetterPrompt || ""));
-        setResumeTemplatePath(data.resumeTemplatePath || "");
+        })
+        setResumeWriterPrompt(decodeBase64(data.resumeWriterPrompt || ''))
+        setCoverLetterPrompt(decodeBase64(data.coverLetterPrompt || ''))
+        setResumeTemplatePath(data.resumeTemplatePath || '')
 
         toast({
-          title: "Success",
-          description: "Settings imported successfully.",
-        });
+          title: 'Success',
+          description: 'Settings imported successfully.',
+        })
       } catch (error) {
-        console.error("Error importing settings:", error);
+        console.error('Error importing settings:', error)
         toast({
-          title: "Error",
-          description:
-            "Failed to import settings. Please check the file format.",
-          variant: "destructive",
-        });
+          title: 'Error',
+          description: 'Failed to import settings. Please check the file format.',
+          variant: 'destructive',
+        })
       }
-    };
-    reader.readAsText(file);
-  };
+    }
+    reader.readAsText(file)
+  }
 
   if (isLoading) {
     return (
@@ -335,7 +322,7 @@ export default function SettingsPage() {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -353,17 +340,14 @@ export default function SettingsPage() {
             ) : (
               <Save className="size-4" />
             )}
-            {isSaving ? "Saving..." : "Save Changes"}
+            {isSaving ? 'Saving...' : 'Save Changes'}
           </Button>
         )}
         <Button onClick={handleExport} variant="outline">
           <Download className="size-4" />
           Export
         </Button>
-        <Button
-          variant="outline"
-          onClick={() => document.getElementById("import-input")?.click()}
-        >
+        <Button variant="outline" onClick={() => document.getElementById('import-input')?.click()}>
           <Upload className="size-4" />
           Import
         </Button>
@@ -401,5 +385,5 @@ export default function SettingsPage() {
         />
       </Tabs>
     </div>
-  );
+  )
 }

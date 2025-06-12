@@ -1,21 +1,16 @@
-import type { Metadata } from "next";
-import { TanstackQueryProvider } from "@/providers/tanstack-query-provider";
-import { Toaster } from "@/components/ui/toaster";
-import "./globals.css";
-import NextAuthProvider from "@/providers/session-provider";
-import { ThemeProvider } from "next-themes";
+import type { Metadata } from 'next'
+import { TanstackQueryProvider } from '@/providers/tanstack-query-provider'
+import { Toaster } from '@/components/ui/toaster'
+import './globals.css'
+import NextAuthProvider from '@/providers/session-provider'
+import { ThemeProvider } from 'next-themes'
 
 export const metadata: Metadata = {
-  title: "Octopilot",
-  description:
-    "Octopilot - Your AI-Powered Auto Job Application and Tracking Assistant",
-};
+  title: 'Octopilot',
+  description: 'Octopilot - Your AI-Powered Auto Job Application and Tracking Assistant',
+}
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <NextAuthProvider>
       <html lang="en" suppressHydrationWarning>
@@ -34,5 +29,5 @@ export default function RootLayout({
         </body>
       </html>
     </NextAuthProvider>
-  );
+  )
 }

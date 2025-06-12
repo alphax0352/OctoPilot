@@ -8,40 +8,40 @@ import {
   parse,
   startOfMonth,
   startOfToday,
-} from "date-fns";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import * as React from "react";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "./button";
+} from 'date-fns'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import * as React from 'react'
+import { cn } from '@/lib/utils'
+import { buttonVariants } from './button'
 
 function getStartOfCurrentMonth() {
-  return startOfMonth(startOfToday());
+  return startOfMonth(startOfToday())
 }
 
 interface MonthPickerProps {
-  currentMonth: Date | null;
-  onMonthChange: (newMonth: Date) => void;
+  currentMonth: Date | null
+  onMonthChange: (newMonth: Date) => void
 }
 
 export function MonthPicker({ currentMonth, onMonthChange }: MonthPickerProps) {
   const [currentYear, setCurrentYear] = React.useState(
-    currentMonth ? format(currentMonth, "yyyy") : format(new Date(), "yyyy"),
-  );
-  const firstDayCurrentYear = parse(currentYear, "yyyy", new Date());
+    currentMonth ? format(currentMonth, 'yyyy') : format(new Date(), 'yyyy')
+  )
+  const firstDayCurrentYear = parse(currentYear, 'yyyy', new Date())
 
   const months = eachMonthOfInterval({
     start: firstDayCurrentYear,
     end: endOfYear(firstDayCurrentYear),
-  });
+  })
 
   function previousYear() {
-    const firstDayNextYear = add(firstDayCurrentYear, { years: -1 });
-    setCurrentYear(format(firstDayNextYear, "yyyy"));
+    const firstDayNextYear = add(firstDayCurrentYear, { years: -1 })
+    setCurrentYear(format(firstDayNextYear, 'yyyy'))
   }
 
   function nextYear() {
-    const firstDayNextYear = add(firstDayCurrentYear, { years: 1 });
-    setCurrentYear(format(firstDayNextYear, "yyyy"));
+    const firstDayNextYear = add(firstDayCurrentYear, { years: 1 })
+    setCurrentYear(format(firstDayNextYear, 'yyyy'))
   }
 
   return (
@@ -55,16 +55,16 @@ export function MonthPicker({ currentMonth, onMonthChange }: MonthPickerProps) {
               role="presentation"
               id="month-picker"
             >
-              {format(firstDayCurrentYear, "yyyy")}
+              {format(firstDayCurrentYear, 'yyyy')}
             </div>
             <div className="flex items-center space-x-1">
               <button
                 name="previous-year"
                 aria-label="Go to previous year"
                 className={cn(
-                  buttonVariants({ variant: "outline" }),
-                  "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
-                  "absolute left-1",
+                  buttonVariants({ variant: 'outline' }),
+                  'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100',
+                  'absolute left-1'
                 )}
                 type="button"
                 onClick={previousYear}
@@ -75,9 +75,9 @@ export function MonthPicker({ currentMonth, onMonthChange }: MonthPickerProps) {
                 name="next-year"
                 aria-label="Go to next year"
                 className={cn(
-                  buttonVariants({ variant: "outline" }),
-                  "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
-                  "absolute right-1 disabled:bg-slate-100",
+                  buttonVariants({ variant: 'outline' }),
+                  'h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100',
+                  'absolute right-1 disabled:bg-slate-100'
                 )}
                 type="button"
                 disabled={isFuture(add(firstDayCurrentYear, { years: 1 }))}
@@ -87,11 +87,7 @@ export function MonthPicker({ currentMonth, onMonthChange }: MonthPickerProps) {
               </button>
             </div>
           </div>
-          <div
-            className="grid w-full grid-cols-3 gap-2"
-            role="grid"
-            aria-labelledby="month-picker"
-          >
+          <div className="grid w-full grid-cols-3 gap-2" role="grid" aria-labelledby="month-picker">
             {months.map((month) => (
               <div
                 key={month.toString()}
@@ -101,12 +97,12 @@ export function MonthPicker({ currentMonth, onMonthChange }: MonthPickerProps) {
                 <button
                   name="day"
                   className={cn(
-                    "inline-flex h-9 w-16 items-center justify-center rounded-md p-0 text-sm font-normal ring-offset-white transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 aria-selected:opacity-100 dark:ring-offset-slate-950 dark:hover:bg-slate-800 dark:hover:text-slate-50 dark:focus-visible:ring-slate-800",
+                    'inline-flex h-9 w-16 items-center justify-center rounded-md p-0 text-sm font-normal ring-offset-white transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 aria-selected:opacity-100 dark:ring-offset-slate-950 dark:hover:bg-slate-800 dark:hover:text-slate-50 dark:focus-visible:ring-slate-800',
                     isEqual(month, currentMonth ?? new Date()) &&
-                      "bg-slate-900 text-slate-50 hover:bg-slate-900 hover:text-slate-50 focus:bg-slate-900 focus:text-slate-50 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50 dark:hover:text-slate-900 dark:focus:bg-slate-50 dark:focus:text-slate-900",
+                      'bg-slate-900 text-slate-50 hover:bg-slate-900 hover:text-slate-50 focus:bg-slate-900 focus:text-slate-50 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50 dark:hover:text-slate-900 dark:focus:bg-slate-50 dark:focus:text-slate-900',
                     !isEqual(month, currentMonth ?? new Date()) &&
                       isEqual(month, getStartOfCurrentMonth()) &&
-                      "bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-50",
+                      'bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-50'
                   )}
                   disabled={isFuture(month)}
                   role="gridcell"
@@ -114,9 +110,7 @@ export function MonthPicker({ currentMonth, onMonthChange }: MonthPickerProps) {
                   type="button"
                   onClick={() => onMonthChange(month)}
                 >
-                  <time dateTime={format(month, "yyyy-MM-dd")}>
-                    {format(month, "MMM")}
-                  </time>
+                  <time dateTime={format(month, 'yyyy-MM-dd')}>{format(month, 'MMM')}</time>
                 </button>
               </div>
             ))}
@@ -124,5 +118,5 @@ export function MonthPicker({ currentMonth, onMonthChange }: MonthPickerProps) {
         </div>
       </div>
     </div>
-  );
+  )
 }
