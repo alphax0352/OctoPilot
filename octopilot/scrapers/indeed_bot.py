@@ -5,6 +5,8 @@ from pydantic import EmailStr
 from selenium_driverless import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from .base_bot import BaseBot
 from octopilot.config import logger
@@ -140,7 +142,36 @@ class IndeedBot(BaseBot):
             logger.error(f"Error during job search: {str(e)}")
             return job_links
 
-    async def get_job_descriptions(self, job_url:str, application: json):
+    async def get_job_descriptions(self, job_links):
+        job_descriptions = []
+        try:
+            for link in job_links:
+                try:
+                    await self.driver.get(link)
+                    
+                    # Optional: delay for dynamic content
+                    await asyncio.sleep(2)
+
+                    # Wait for the job description element to load
+                    wait = WebDriverWait(self.driver, 10)
+                    job_description_element = wait.until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, ".job-description, .description, [data-testid='jobDescriptionText']"))
+                    )
+
+                    # Extract text or inner HTML
+                    description = job_description_element.get_attribute("innerText")  # or "innerHTML" if needed
+                    job_descriptions.append(description)
+
+                except Exception as inner_e:
+                    logger.warning(f"Failed to extract job description from {link}: {str(inner_e)}")
+                    # job_descriptions.append("")
+
+        except Exception as e:
+            logger.error(f"Error during getting full job descriptions: {str(e)}")
+
+        return job_descriptions
+    
+    async def auto_apply(self, job_url:str, application: json):
         try:
             await self.driver.get(job_url)
             apply_button = await self.driver.find_element(By.XPATH, "//button[contains(text(), 'Apply now')]")

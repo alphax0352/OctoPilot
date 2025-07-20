@@ -1,15 +1,10 @@
-"use client";
+'use client'
 
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useToast } from "@/hooks/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useToast } from '@/hooks/use-toast'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -17,13 +12,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Pilot, SavedPilot, pilotSchema } from "@/types/client";
-import { useEditPilot } from "@/hooks/use-pilot";
-import { Loader2Icon } from "lucide-react";
-import { compareData } from "@/lib/compare-data";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Pilot, SavedPilot, pilotSchema } from '@/types/client'
+import { useEditPilot } from '@/hooks/use-pilot'
+import { Loader2Icon } from 'lucide-react'
+import { compareData } from '@/lib/compare-data'
 import {
   Select,
   SelectContent,
@@ -32,27 +27,23 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from '../ui/select'
 
 interface EditPilotDialogProps {
-  pilot: SavedPilot;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  pilot: SavedPilot
+  open: boolean
+  onOpenChange: (open: boolean) => void
 }
 
-export function EditPilotDialog({
-  pilot,
-  open,
-  onOpenChange,
-}: EditPilotDialogProps) {
-  const { toast } = useToast();
+export function EditPumperDialog({ pilot, open, onOpenChange }: EditPilotDialogProps) {
+  const { toast } = useToast()
   const {
     mutate: editPilot,
     isSuccess: pilotHasBeenUpdated,
     isPending: isUpdatingPilot,
     isError: updatePilotError,
     error: updatePilotErrorData,
-  } = useEditPilot();
+  } = useEditPilot()
 
   const form = useForm<Pilot>({
     resolver: zodResolver(pilotSchema),
@@ -63,57 +54,57 @@ export function EditPilotDialog({
       category: pilot.category,
       keywords: pilot.keywords,
     },
-  });
+  })
 
   useEffect(() => {
     if (pilotHasBeenUpdated) {
       toast({
-        description: "Pilot updated successfully",
-      });
-      form.reset();
-      onOpenChange(false);
+        description: 'Pilot updated successfully',
+      })
+      form.reset()
+      onOpenChange(false)
     }
-  }, [pilotHasBeenUpdated, onOpenChange, toast]);
+  }, [pilotHasBeenUpdated, onOpenChange, toast])
 
   useEffect(() => {
     if (updatePilotError) {
       toast({
-        variant: "destructive",
-        title: "Error",
+        variant: 'destructive',
+        title: 'Error',
         description:
           updatePilotErrorData instanceof Error
             ? updatePilotErrorData.message
             : String(updatePilotErrorData),
-      });
+      })
     }
-  }, [updatePilotError, toast]);
+  }, [updatePilotError, toast])
 
   function onSubmit(data: Pilot) {
     try {
-      const changedFields = data as Partial<Pilot>;
+      const changedFields = data as Partial<Pilot>
 
       Object.keys(data).forEach((key) => {
-        const typedKey = key as keyof Pilot;
+        const typedKey = key as keyof Pilot
         if (compareData(pilot[typedKey], data[typedKey])) {
-          delete changedFields[typedKey];
+          delete changedFields[typedKey]
         }
-      });
+      })
 
       if (Object.keys(changedFields).length > 0) {
         editPilot({
           pilotId: pilot.id,
           updatedPilot: changedFields,
-        });
+        })
       } else {
-        onOpenChange(false);
+        onOpenChange(false)
       }
     } catch (error) {
-      console.log("💥", error);
+      console.log('💥', error)
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to update pilot. Please try again.",
-      });
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to update pilot. Please try again.',
+      })
     }
   }
   return (
@@ -132,10 +123,7 @@ export function EditPilotDialog({
                   <FormItem>
                     <FormLabel>Select Platform</FormLabel>
                     <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <SelectTrigger className="w-[180px]">
                           <SelectValue placeholder="Select a platform" />
                         </SelectTrigger>
@@ -163,10 +151,7 @@ export function EditPilotDialog({
                   <FormItem>
                     <FormLabel>Category</FormLabel>
                     <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <SelectTrigger className="w-[180px]">
                           <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
@@ -177,27 +162,13 @@ export function EditPilotDialog({
                           "full-stack-engineer", "frontend-engineer",
                           "backend-engineer", "software-engineer",
                           "ai-engineer", "data-scientist", "devops-engineer", ] */}
-                            <SelectItem value="full-stack-engineer">
-                              Full Stack Engineer
-                            </SelectItem>
-                            <SelectItem value="frontend-engineer">
-                              Frontend Engineer
-                            </SelectItem>
-                            <SelectItem value="backend-engineer">
-                              Backend Engineer
-                            </SelectItem>
-                            <SelectItem value="software-engineer">
-                              Software Engineer
-                            </SelectItem>
-                            <SelectItem value="ai-engineer">
-                              AI Engineer
-                            </SelectItem>
-                            <SelectItem value="data-scientist">
-                              Data Scientist
-                            </SelectItem>
-                            <SelectItem value="devops-engineer">
-                              DevOps Engineer
-                            </SelectItem>
+                            <SelectItem value="full-stack-engineer">Full Stack Engineer</SelectItem>
+                            <SelectItem value="frontend-engineer">Frontend Engineer</SelectItem>
+                            <SelectItem value="backend-engineer">Backend Engineer</SelectItem>
+                            <SelectItem value="software-engineer">Software Engineer</SelectItem>
+                            <SelectItem value="ai-engineer">AI Engineer</SelectItem>
+                            <SelectItem value="data-scientist">Data Scientist</SelectItem>
+                            <SelectItem value="devops-engineer">DevOps Engineer</SelectItem>
                           </SelectGroup>
                         </SelectContent>
                       </Select>
@@ -251,19 +222,11 @@ export function EditPilotDialog({
             />
 
             <div className="flex justify-end gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
               {isUpdatingPilot ? (
-                <Button
-                  type="submit"
-                  className="cursor-not-allowed flex gap-2 w-full"
-                  disabled
-                >
+                <Button type="submit" className="cursor-not-allowed flex gap-2 w-full" disabled>
                   <Loader2Icon className="h-6 w-6 animate-spin" />
                   <span>Updating Pilot...</span>
                 </Button>
@@ -277,5 +240,5 @@ export function EditPilotDialog({
         </Form>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

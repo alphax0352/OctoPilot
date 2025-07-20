@@ -1,40 +1,32 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
-import { TabsContent } from "../ui/tabs";
-import { Label } from "../ui/label";
-import { Textarea } from "../ui/textarea";
-import { FileUpload } from "../ui/file-upload";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
+import { TabsContent } from '../ui/tabs'
+import { Label } from '../ui/label'
+import { Textarea } from '../ui/textarea'
+import { FileUpload } from '../ui/file-upload'
 
-interface VaiTabProps {
-  resumeWriterPrompt: string;
-  coverLetterPrompt: string;
-  resumeTemplatePath: string;
-  setResumeWriterPrompt: (value: string) => void;
-  setCoverLetterPrompt: (value: string) => void;
-  setResumeTemplatePath: (value: string) => void;
+interface IUploadTab {
+  resumeWriterPrompt: string
+  coverLetterPrompt: string
+  resumeTemplatePath: string
+  setResumeWriterPrompt: (value: string) => void
+  setCoverLetterPrompt: (value: string) => void
+  setResumeTemplatePath: (value: string) => void
 }
 
-export default function VaiTab({
+export function UploadTab({
   resumeWriterPrompt,
   coverLetterPrompt,
   resumeTemplatePath,
   setResumeWriterPrompt,
   setCoverLetterPrompt,
   setResumeTemplatePath,
-}: VaiTabProps) {
+}: IUploadTab) {
   return (
-    <TabsContent value="vai" className="space-y-4">
+    <TabsContent value="upload" className="space-y-4">
       <Card>
         <CardHeader>
           <CardTitle>Resume Template</CardTitle>
-          <CardDescription>
-            Upload a .docx template file for your resume
-          </CardDescription>
+          <CardDescription>Upload a .docx template file for your resume</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -53,9 +45,7 @@ export default function VaiTab({
         <Card className="w-full">
           <CardHeader>
             <CardTitle>Resume Writer Prompt</CardTitle>
-            <CardDescription>
-              Customize the prompt used for generating your resume
-            </CardDescription>
+            <CardDescription>Customize the prompt used for generating your resume</CardDescription>
           </CardHeader>
           <CardContent>
             <Textarea
@@ -84,5 +74,5 @@ export default function VaiTab({
         </Card>
       </div>
     </TabsContent>
-  );
+  )
 }

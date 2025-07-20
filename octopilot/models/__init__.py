@@ -1,9 +1,9 @@
 from .job_description import JobDescription
-from .resume import Resume
 from .application import Application
+from .user import User
 
 __all__ = [
     "JobDescription",
-    "Resume",
-    "Application"
+    "Application",
+    "User"
 ]

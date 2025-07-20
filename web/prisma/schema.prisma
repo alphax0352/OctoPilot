@@ -14,113 +14,176 @@ datasource db {
 }
 
 model Account {
-  id                    String            @id @default(cuid())
-  userId                String
-  provider              String
-  providerAccountId     String
-  type                  String
-  refresh_token         String?           @db.Text
-  access_token          String?           @db.Text
-  expires_at            Int?
-  token_type            String?
-  scope                 String?
-  id_token              String?           @db.Text
-  session_state         String?
-  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                String  @id @default(cuid())
+  userId            String
+  provider          String
+  providerAccountId String
+  type              String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
 }
 
 model Session {
-  id                    String            @id @default(cuid())
-  sessionToken          String            @unique
-  userId                String
-  expires               DateTime
-  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  userId       String
+  sessionToken String   @unique
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
 
 model User {
-  id                    String            @id @default(cuid())
-  name                  String
-  email                 String            @unique
-  password              String?
-  image                 String?
-  emailVerified         DateTime?
-  isVerified            Boolean           @default(false)
-  accounts              Account[]
-  sessions              Session[]
-  applications          Application[]
-  createdAt             DateTime          @default(now())
-  updatedAt             DateTime          @updatedAt
-  lastActiveAt          DateTime          @default(now())
-  mainInfo              MainInfo?
-  employmentHistory     EmploymentHistory[]
-  educationInfo         EducationInfo?
-  resumeWriterPrompt    String?
-  coverLetterPrompt     String?
-  resumeTemplatePath    String?
+  id                String              @id @default(cuid())
+  name              String
+  email             String              @unique
+  password          String?
+  image             String?
+  isVerified        Boolean             @default(false)
+  accounts          Account[]
+  sessions          Session[]
+  applications      Application[]
+  mainInfo          PersonalInfo?
+  employmentHistory EmploymentHistory[]
+  educationInfo     EducationInfo?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  Portfolio         Portfolio[]
 
   @@map("users")
 }
 
-model MainInfo {
-  id                    String            @id @default(cuid())
-  userId                String            @unique
-  name                  String?
-  email                 String?
-  phone                 String?
-  location              String?
-  linkedin              String?
-  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+model PersonalInfo {
+  id       String  @id @default(cuid())
+  userId   String  @unique
+  name     String?
+  email    String?
+  phone    String?
+  location String?
+  linkedin String?
+  user     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("main_info")
+  @@map("personal_info")
 }
 
 model EducationInfo {
-  id                    String            @id @default(cuid())
-  userId                String            @unique
-  school                String?
-  degree                String?
-  from                  String?
-  to                    String?
-  location              String?
-  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id             String  @id @default(cuid())
+  userId         String  @unique
+  university     String?
+  field_of_study String?
+  degree         String?
+  start          String?
+  end            String?
+  location       String?
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("education_info")
 }
 
-model Application {
-  id                    Int               @id @default(autoincrement())
-  userId                String
-  title                 String
-  company               String
-  description           String
-  resumePath            String?
-  coverLetter           String?
-  status                ApplicationStatus @default(APPLIED)
-  createdAt             DateTime          @default(now())
-  updatedAt             DateTime          @updatedAt
-  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("applications")
-}
-
 model EmploymentHistory {
-  id                    Int               @id @default(autoincrement())
-  userId                String
-  company               String?
-  title                 String?
-  from                  String?
-  to                    String?
-  location              String?
-  description           String?
-  // projects              String?
-  user                  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  userId       String
+  position     String
+  company      String
+  start        DateTime
+  end          DateTime
+  location     String
+  descriptions Json[]
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("employment_history")
+}
+
+model Portfolio {
+  id       String @id @default(cuid())
+  userId   String
+  industry String
+  projects Json[]
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("portfolio")
+}
+
+model SelfIdentification {
+  id         String @id @default(cuid())
+  userId     String
+  gender     String
+  pronouns   String
+  veteran    String
+  disability String
+  ethnicity  String
+
+  @@map("self_identification")
+}
+
+model LegalAuthorization {
+  id                      String @id @default(cuid())
+  userId                  String
+  us_work_authorization   String
+  eu_work_authorization   String
+  requires_us_visa        String
+  requires_eu_visa        String
+  requires_uk_visa        String
+  requires_us_sponsorship String
+  requires_eu_sponsorship String
+  requires_uk_sponsorship String
+
+  @@map("legal_authorization")
+}
+
+model WorkPreferences {
+  id                                   String  @id @default(cuid())
+  userId                               String
+  notice_period                        String
+  salary_range_usd                     String
+  remote_work                          String
+  in_person_work                       String
+  open_to_relocation                   String
+  willing_to_complete_assessments      Boolean @default(true)
+  willing_to_undergo_drug_tests        Boolean @default(true)
+  willing_to_undergo_background_checks Boolean @default(true)
+
+  @@map("work_preferences")
+}
+
+model JobDescriptions {
+  id                             String   @id @default(cuid())
+  position                       String
+  company                        String
+  location                       String
+  summary                        String
+  responsibility_duties          String[]
+  required_qualification_skills  String[]
+  preferred_qualification_skills String[]
+  work_environment               String
+  salary_benefits                String
+
+  @@map("job_descriptions")
+}
+
+model Application {
+  id              Int               @id @default(autoincrement())
+  userId          String
+  position        String
+  company         String
+  description     String
+  resumePath      String?
+  coverLetterPath String?
+  status          ApplicationStatus @default(APPLIED)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("application")
 }
 
 enum ApplicationStatus {
@@ -135,4 +198,3 @@ enum ApplicationStatus {
   ONBOARDING
   REJECTED
 }
-

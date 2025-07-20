@@ -5,5 +5,5 @@ export function Footer() {
         Made with ❤️ by Yon and Vnycorn, Copyright © 2025. All rights
       </p>
     </div>
-  );
+  )
 }

@@ -1,23 +1,41 @@
 from datetime import datetime, timezone
-from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, UUID, Enum
 from sqlalchemy.orm import relationship
 from .base import Base
+import enum
+
+class StatusEnum(enum.Enum):
+    APPLIED = "applied"
+    INTRO = "intro"
+    STEP2 = "step 2"
+    STEP3 = "step 3"
+    STEP4 = "step 4"
+    STEP5 = "step 5"
+    STEP6 = "step 6"
+    FINAL = "final"
+    ONBOARDING = "onboarding"
+    REJECTED = "rejected"
 
 class SelfIdentification(Base):
     __tablename__ = "self_identification"
     
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID, primary_key=True)
+    userId = Column(UUID, ForeignKey("users.id"))
     gender = Column(String)
     pronouns = Column(String)
     veteran = Column(String)
     disability = Column(String)
     ethnicity = Column(String)
-    application_id = Column(Integer, ForeignKey("applications.id"))
+    
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    
 
 class LegalAuthorization(Base):
     __tablename__ = "legal_authorization"
     
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID, primary_key=True)
+    userId = Column(UUID, ForeignKey("users.id"))
     eu_work_authorization = Column(String)
     us_work_authorization = Column(String)
     requires_us_visa = Column(String)
@@ -34,30 +52,40 @@ class LegalAuthorization(Base):
     requires_uk_visa = Column(String)
     legally_allowed_to_work_in_uk = Column(String)
     requires_uk_sponsorship = Column(String)
-    application_id = Column(Integer, ForeignKey("applications.id"))
+    
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
+    
 
 class WorkPreferences(Base):
     __tablename__ = "work_preferences"
     
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(UUID, primary_key=True)
+    userId = Column(UUID, ForeignKey("users.id"))
+    notice_period = Column(String)
+    salary_range_usd = Column(String)
     remote_work = Column(String)
     in_person_work = Column(String)
     open_to_relocation = Column(String)
     willing_to_complete_assessments = Column(String)
     willing_to_undergo_drug_tests = Column(String)
     willing_to_undergo_background_checks = Column(String)
-    application_id = Column(Integer, ForeignKey("applications.id"))
+    
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
+    updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
 
 class Application(Base):
     __tablename__ = "applications"
     
-    id = Column(Integer, primary_key=True, index=True)
-    notice_period = Column(String)
-    salary_range_usd = Column(String)
+    id = Column(UUID, primary_key=True)
+    userId = Column(UUID, ForeignKey("users.id"))
     resume_path = Column(String, nullable=False)
     cover_letter_path = Column(String, nullable=True)
+    self_identification_id = Column(UUID, ForeignKey("self_identification.id"))
+    legal_authorization_id = Column(UUID, ForeignKey("legal_authorization.id"))
+    work_preferences_id = Column(UUID, ForeignKey("work_preferences.id"))
+    status = Column(Enum(StatusEnum))
+    
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=datetime.now(timezone.utc), onupdate=datetime.now(timezone.utc))
-    self_identification = relationship("SelfIdentificationModel", backref="application", uselist=False)
-    legal_authorization = relationship("LegalAuthorizationModel", backref="application", uselist=False)
-    work_preferences = relationship("WorkPreferencesModel", backref="application", uselist=False)
+

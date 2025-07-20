@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
+import { useEffect } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -11,13 +11,13 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import type { Pilot } from "@/types/client";
-import { useToast } from "@/hooks/use-toast";
-import { pilotSchema } from "@/types/client";
-import { useNewPilot } from "@/hooks/use-pilot";
-import { Loader2Icon } from "lucide-react";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import type { Pilot } from '@/types/client'
+import { useToast } from '@/hooks/use-toast'
+import { pilotSchema } from '@/types/client'
+import { useNewPilot } from '@/hooks/use-pilot'
+import { Loader2Icon } from 'lucide-react'
 import {
   Select,
   SelectContent,
@@ -26,62 +26,62 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from '../ui/select'
 
-export function PilotForm() {
-  const { toast } = useToast();
+export function PumperForm() {
+  const { toast } = useToast()
   const {
     mutate: addPilot,
     isSuccess: pilotHasBeenAdded,
     isPending: isAddingPilot,
     isError: addPilotError,
     error: addPilotErrorData,
-  } = useNewPilot();
+  } = useNewPilot()
 
   const form = useForm<Pilot>({
     resolver: zodResolver(pilotSchema),
     defaultValues: {
-      platform: "indeed",
-      email: "",
-      password: "",
-      category: "full-stack-engineer",
-      keywords: "",
+      platform: 'indeed',
+      email: '',
+      password: '',
+      category: 'full-stack-engineer',
+      keywords: '',
     },
-  });
+  })
 
   useEffect(() => {
     if (pilotHasBeenAdded) {
       toast({
-        title: "Pilot scheduled",
-        description: "Your pilot has been scheduled.",
-      });
-      form.reset();
+        title: 'Pilot scheduled',
+        description: 'Your pilot has been scheduled.',
+      })
+      form.reset()
     }
-  }, [pilotHasBeenAdded]);
+  }, [pilotHasBeenAdded])
 
   useEffect(() => {
     if (addPilotError) {
       toast({
-        variant: "destructive",
-        title: "Error",
+        variant: 'destructive',
+        title: 'Error',
         description:
           addPilotErrorData instanceof Error
             ? addPilotErrorData.message
             : String(addPilotErrorData),
-      });
+      })
     }
-  }, [addPilotError]);
+  }, [addPilotError])
 
   function onSubmit(data: Pilot) {
     try {
-      addPilot(data);
+      addPilot(data)
     } catch (error) {
-      console.log("💥", error);
+      console.log('💥', error)
       toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to schedule pilot. Please try again.",
-      });
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to schedule pilot. Please try again.',
+      })
     }
   }
 
@@ -96,10 +96,7 @@ export function PilotForm() {
               <FormItem>
                 <FormLabel>Select Platform</FormLabel>
                 <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Select a platform" />
                     </SelectTrigger>
@@ -127,10 +124,7 @@ export function PilotForm() {
               <FormItem>
                 <FormLabel>Category</FormLabel>
                 <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
@@ -141,25 +135,13 @@ export function PilotForm() {
                           "full-stack-engineer", "frontend-engineer",
                           "backend-engineer", "software-engineer",
                           "ai-engineer", "data-scientist", "devops-engineer", ] */}
-                        <SelectItem value="full-stack-engineer">
-                          Full Stack Engineer
-                        </SelectItem>
-                        <SelectItem value="frontend-engineer">
-                          Frontend Engineer
-                        </SelectItem>
-                        <SelectItem value="backend-engineer">
-                          Backend Engineer
-                        </SelectItem>
-                        <SelectItem value="software-engineer">
-                          Software Engineer
-                        </SelectItem>
+                        <SelectItem value="full-stack-engineer">Full Stack Engineer</SelectItem>
+                        <SelectItem value="frontend-engineer">Frontend Engineer</SelectItem>
+                        <SelectItem value="backend-engineer">Backend Engineer</SelectItem>
+                        <SelectItem value="software-engineer">Software Engineer</SelectItem>
                         <SelectItem value="ai-engineer">AI Engineer</SelectItem>
-                        <SelectItem value="data-scientist">
-                          Data Scientist
-                        </SelectItem>
-                        <SelectItem value="devops-engineer">
-                          DevOps Engineer
-                        </SelectItem>
+                        <SelectItem value="data-scientist">Data Scientist</SelectItem>
+                        <SelectItem value="devops-engineer">DevOps Engineer</SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -213,11 +195,7 @@ export function PilotForm() {
         />
 
         {isAddingPilot ? (
-          <Button
-            type="submit"
-            className="cursor-not-allowed flex gap-2"
-            disabled
-          >
+          <Button type="submit" className="cursor-not-allowed flex gap-2" disabled>
             <Loader2Icon className="h-6 w-6 animate-spin" />
             <span>Creating Pilot...</span>
           </Button>
@@ -228,5 +206,5 @@ export function PilotForm() {
         )}
       </form>
     </Form>
-  );
+  )
 }

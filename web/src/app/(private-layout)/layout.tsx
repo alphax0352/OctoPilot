@@ -1,18 +1,14 @@
-import { PropsWithChildren } from "react";
-import { redirect } from "next/navigation";
-import { getUser } from "@/lib/auth";
-import { AppSidebar } from "@/components/app-sidebar";
-import { Separator } from "@/components/ui/separator";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { BreadcrumbNav } from "@/components/breadcrumb-nav";
-import ToggleTheme from "@/components/ui/toggle";
+import { PropsWithChildren } from 'react'
+import { redirect } from 'next/navigation'
+import { getUser } from '@/lib/auth'
+import { AppSidebar } from '@/components/app-sidebar'
+import { Separator } from '@/components/ui/separator'
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { BreadcrumbNav } from '@/components/breadcrumb-nav'
+import ToggleTheme from '@/components/ui/toggle'
 export default async function PrivateLayout({ children }: PropsWithChildren) {
-  const session = await getUser();
-  if (!session?.user) redirect("/sign-in");
+  const session = await getUser()
+  if (!session?.user) redirect('/sign-in')
 
   return (
     <SidebarProvider>
@@ -26,8 +22,8 @@ export default async function PrivateLayout({ children }: PropsWithChildren) {
           </div>
           <ToggleTheme />
         </header>
-        {children}
+        <div className="pb-6">{children}</div>
       </SidebarInset>
     </SidebarProvider>
-  );
+  )
 }

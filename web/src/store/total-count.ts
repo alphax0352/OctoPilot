@@ -1,10 +1,10 @@
-import { create } from "zustand";
+import { create } from 'zustand'
 
 interface TotalCountState {
-  total: number;
-  setTotal: (count: number) => void;
-  increaseTotal: () => void;
-  decreaseTotal: () => void;
+  total: number
+  setTotal: (count: number) => void
+  increaseTotal: () => void
+  decreaseTotal: () => void
 }
 
 export const useTotalCount = create<TotalCountState>((set) => ({
@@ -12,4 +12,4 @@ export const useTotalCount = create<TotalCountState>((set) => ({
   setTotal: (count) => set({ total: count }),
   increaseTotal: () => set((state) => ({ total: state.total + 1 })),
   decreaseTotal: () => set((state) => ({ total: state.total - 1 })),
-}));
+}))
