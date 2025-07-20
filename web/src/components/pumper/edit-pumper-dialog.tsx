@@ -35,7 +35,7 @@ interface EditPilotDialogProps {
   onOpenChange: (open: boolean) => void
 }
 
-export function EditPilotDialog({ pilot, open, onOpenChange }: EditPilotDialogProps) {
+export function EditPumperDialog({ pilot, open, onOpenChange }: EditPilotDialogProps) {
   const { toast } = useToast()
   const {
     mutate: editPilot,

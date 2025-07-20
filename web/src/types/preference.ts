@@ -8,7 +8,7 @@ export const userSchema = z.object({
   lastActiveAt: z.date(),
 })
 
-export const pilotSchema = z.object({
+export const pumperSchema = z.object({
   platform: z.enum(['indeed', 'linkedin', 'glassdoor', 'adzuna']),
   email: z.string().email('Invalid email address'),
   password: z.string(),
@@ -49,39 +49,43 @@ export const applicationSchema = z.object({
   status: applicationStatusSchema,
 })
 
-export const personalInfoSchema = z.object({
-  name: z.string(),
-  email: z.string().email('Invalid email address'),
-  phone: z.string(),
-  address: z.string(),
-  linkedin: z.string(),
+export const selfIdentificatonSchema = z.object({
+  gender: z.string(),
+  pronouns: z.string(),
+  veteran: z.string(),
+  disability: z.string(),
+  ethnicity: z.string(),
 })
 
-export const employmentHistorySchema = z.object({
-  company: z.string(),
-  title: z.string(),
-  from: z.string(),
-  to: z.string(),
-  location: z.string(),
-  description: z.string(),
-  // projects: z.string().optional(),
+export const legalAuthorizationSchema = z.object({
+  us_work_authorization: z.string(),
+  eu_work_authorization: z.string(),
+  requires_us_visa: z.string(),
+  requires_eu_visa: z.string(),
+  requires_uk_visa: z.string(),
+  requires_us_sponsorship: z.string(),
+  requires_eu_sponsorship: z.string(),
+  requires_uk_sponsorship: z.string(),
 })
 
-export const educationInfoSchema = z.object({
-  school: z.string(),
-  degree: z.string(),
-  from: z.string(),
-  to: z.string(),
-  location: z.string(),
+export const workPreferenceSchema = z.object({
+  notice_period: z.string(),
+  salary_range_usd: z.string(),
+  remote_work: z.string(),
+  in_person_work: z.string(),
+  open_to_relocation: z.string(),
+  willing_to_complete_assessments: z.string(),
+  willing_to_undergo_drug_tests: z.string(),
+  willing_to_undergo_background_checks: z.string(),
 })
 
 export type User = z.infer<typeof userSchema>
-export type Pilot = z.infer<typeof pilotSchema>
+export type Pumper = z.infer<typeof pumperSchema>
 export type ApplicationStatus = z.infer<typeof applicationStatusSchema>
 export type Application = z.infer<typeof applicationSchema>
-export type SavedPilot = Pilot & {
+export type SavedPilot = Pumper & {
   id: string
 }
-export type PersonalInfo = z.infer<typeof personalInfoSchema>
-export type EmploymentHistory = z.infer<typeof employmentHistorySchema>
-export type EducationInfo = z.infer<typeof educationInfoSchema>
+export type SelfIdentification = z.infer<typeof selfIdentificatonSchema>
+export type WorkPreference = z.infer<typeof workPreferenceSchema>
+export type LegalAuthorization = z.infer<typeof legalAuthorizationSchema>

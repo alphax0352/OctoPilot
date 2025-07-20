@@ -1,7 +1,7 @@
-import { PilotForm } from '@/components/pilot/pilot-form'
-import { PilotList } from '@/components/pilot/pilot-list'
+import { PumperForm } from '@/components/pumper/pumper-form'
+import { PumperList } from '@/components/pumper/pumper-list'
 
-export default function PilotPage() {
+export default function PumperPage() {
   return (
     <div className="container space-y-8">
       <header className="space-y-2">
@@ -14,14 +14,14 @@ export default function PilotPage() {
             <div className="rounded-lg border bg-card text-card-foreground shadow">
               <div className="p-6">
                 <h2 className="text-xl font-semibold mb-6">Build Your Pilot</h2>
-                <PilotForm />
+                <PumperForm />
               </div>
             </div>
           </div>
         </div>
         <div className="lg:col-span-3 space-y-4">
           <h2 className="text-xl font-semibold">Your Pilots</h2>
-          <PilotList />
+          <PumperList />
         </div>
       </div>
     </div>

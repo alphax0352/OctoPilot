@@ -28,14 +28,9 @@ const data = {
       icon: Home,
     },
     {
-      title: 'Pilot',
-      url: '/pilot',
-      icon: User,
-    },
-    {
-      title: 'Vilder',
-      url: '/vilder',
-      icon: WandSparkles,
+      title: 'Job',
+      url: '/job',
+      icon: Bot,
     },
     {
       title: 'Application',
@@ -43,8 +38,18 @@ const data = {
       icon: Bot,
     },
     {
-      title: 'Settings',
-      url: '/settings',
+      title: 'Pumper',
+      url: '/pumper',
+      icon: User,
+    },
+    {
+      title: 'Generator',
+      url: '/generator',
+      icon: WandSparkles,
+    },
+    {
+      title: 'Profile',
+      url: '/profile',
       icon: Settings,
     },
   ],

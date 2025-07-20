@@ -4,7 +4,7 @@ import { Label } from '../ui/label'
 import { Textarea } from '../ui/textarea'
 import { FileUpload } from '../ui/file-upload'
 
-interface VaiTabProps {
+interface IUploadTab {
   resumeWriterPrompt: string
   coverLetterPrompt: string
   resumeTemplatePath: string
@@ -13,16 +13,16 @@ interface VaiTabProps {
   setResumeTemplatePath: (value: string) => void
 }
 
-export default function VaiTab({
+export function UploadTab({
   resumeWriterPrompt,
   coverLetterPrompt,
   resumeTemplatePath,
   setResumeWriterPrompt,
   setCoverLetterPrompt,
   setResumeTemplatePath,
-}: VaiTabProps) {
+}: IUploadTab) {
   return (
-    <TabsContent value="vai" className="space-y-4">
+    <TabsContent value="upload" className="space-y-4">
       <Card>
         <CardHeader>
           <CardTitle>Resume Template</CardTitle>

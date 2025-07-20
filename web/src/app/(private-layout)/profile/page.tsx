@@ -5,18 +5,19 @@ import { Save, Download, Upload } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { toast } from '@/hooks/use-toast'
-import { EducationInfo, EmploymentHistory, MainInfo } from '@/types/client'
+import { PersonalInfo, EducationInfo, EmploymentHistory } from '@/types/client'
 import { AxiosInstance } from '@/lib/axios-instance'
-import ResumeTab from '@/components/settings/resume-tab'
-import VaiTab from '@/components/settings/vai-tab'
-import { encodeBase64, decodeBase64 } from '@/lib/base64'
+// import { encodeBase64, decodeBase64 } from '@/lib/base64'
+import { ResumeTab } from '@/components/profile/resume-tab'
+import { PreferenceTab } from '@/components/profile/preference-tab'
+import { LegalAuthorization, SelfIdentification, WorkPreference } from '@/types/preference'
 
-export default function SettingsPage() {
-  const [mainInfo, setMainInfo] = useState<MainInfo>({
+export default function ProfilePage() {
+  const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     name: '',
     email: '',
     phone: '',
-    location: '',
+    address: '',
     linkedin: '',
   })
   const [employmentHistory, setEmploymentHistory] = useState<EmploymentHistory[]>([])
@@ -27,26 +28,54 @@ export default function SettingsPage() {
     to: '',
     location: '',
   })
-  const [resumeWriterPrompt, setResumeWriterPrompt] = useState<string>('')
-  const [coverLetterPrompt, setCoverLetterPrompt] = useState<string>('')
-  const [resumeTemplatePath, setResumeTemplatePath] = useState<string>('')
+  const [selfIdentificationInfo, setSelfIdentificationInfo] = useState<SelfIdentification>({
+    gender: '',
+    pronouns: '',
+    veteran: '',
+    disability: '',
+    ethnicity: '',
+  })
+  const [legalAuthorizationInfo, setLegalAuthorizationInfo] = useState<LegalAuthorization>({
+    us_work_authorization: '',
+    eu_work_authorization: '',
+    requires_us_visa: '',
+    requires_eu_visa: '',
+    requires_uk_visa: '',
+    requires_us_sponsorship: '',
+    requires_eu_sponsorship: '',
+    requires_uk_sponsorship: '',
+  })
+  const [workPreferenceInfo, setWorkPreferenceInfo] = useState<WorkPreference>({
+    notice_period: '',
+    salary_range_usd: '',
+    remote_work: '',
+    in_person_work: '',
+    open_to_relocation: '',
+    willing_to_complete_assessments: '',
+    willing_to_undergo_drug_tests: '',
+    willing_to_undergo_background_checks: '',
+  })
+
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [hasChanges, setHasChanges] = useState(false)
 
   const [initialData, setInitialData] = useState<{
-    mainInfo: MainInfo
+    personalInfo: PersonalInfo
     employmentHistory: EmploymentHistory[]
     educationInfo: EducationInfo
-    resumeWriterPrompt: string
-    coverLetterPrompt: string
-    resumeTemplatePath: string
+    selfIdentificationInfo: SelfIdentification
+    legalAuthorizationIfo: LegalAuthorization
+    workPreferenceInfo: WorkPreference
+    // resumeWriterPrompt: string
+    // coverLetterPrompt: string
+    // resumeTemplatePath: string
   }>({
-    mainInfo: {
+    personalInfo: {
       name: '',
       email: '',
       phone: '',
-      location: '',
+      address: '',
       linkedin: '',
     },
     employmentHistory: [],
@@ -57,15 +86,42 @@ export default function SettingsPage() {
       to: '',
       location: '',
     },
-    resumeWriterPrompt: '',
-    coverLetterPrompt: '',
-    resumeTemplatePath: '',
+    selfIdentificationInfo: {
+      gender: '',
+      pronouns: '',
+      veteran: '',
+      disability: '',
+      ethnicity: '',
+    },
+    legalAuthorizationIfo: {
+      us_work_authorization: '',
+      eu_work_authorization: '',
+      requires_us_visa: '',
+      requires_eu_visa: '',
+      requires_uk_visa: '',
+      requires_us_sponsorship: '',
+      requires_eu_sponsorship: '',
+      requires_uk_sponsorship: '',
+    },
+    workPreferenceInfo: {
+      notice_period: '',
+      salary_range_usd: '',
+      remote_work: '',
+      in_person_work: '',
+      open_to_relocation: '',
+      willing_to_complete_assessments: '',
+      willing_to_undergo_background_checks: '',
+      willing_to_undergo_drug_tests: '',
+    },
+    // resumeWriterPrompt: '',
+    // coverLetterPrompt: '',
+    // resumeTemplatePath: '',
   })
 
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const { data } = await AxiosInstance.get('/api/settings')
+        const { data } = await AxiosInstance.get('/api/profile')
 
         // Format dates for employment history
         const initialEmploymentHistory = data.employmentHistory || []
@@ -85,28 +141,64 @@ export default function SettingsPage() {
               location: '',
             }
 
-        const initialMainInfo = data.mainInfo || {
+        const initialPersonalInfo = data.personalInfo || {
           name: '',
           email: '',
           phone: '',
-          location: '',
+          address: '',
           linkedin: '',
         }
 
-        setMainInfo(initialMainInfo)
+        const initialSelfIdentificationInfo = data.selfIdentificationInfo || {
+          gender: '',
+          pronouns: '',
+          veteran: '',
+          disability: '',
+          ethnicity: '',
+        }
+
+        const initialLegalAuthorizationInfo = data.legalAuthorizationInfo || {
+          us_work_authorization: '',
+          eu_work_authorization: '',
+          requires_us_visa: '',
+          requires_eu_visa: '',
+          requires_uk_visa: '',
+          requires_us_sponsorship: '',
+          requires_eu_sponsorship: '',
+          requires_uk_sponsorship: '',
+        }
+
+        const initialWorkPreferenceInfo = data.workPreferenceInfo || {
+          notice_period: '',
+          salary_range_usd: '',
+          remote_work: '',
+          in_person_work: '',
+          open_to_relocation: '',
+          willing_to_complete_assessments: '',
+          willing_to_undergo_background_checks: '',
+          willing_to_undergo_drug_tests: '',
+        }
+
+        setPersonalInfo(initialPersonalInfo)
         setEmploymentHistory(initialEmploymentHistory)
         setEducationInfo(formattedEducationInfo)
-        setResumeWriterPrompt(data.resumeWriterPrompt || '')
-        setCoverLetterPrompt(data.coverLetterPrompt || '')
-        setResumeTemplatePath(data.resumeTemplatePath || '')
+        setSelfIdentificationInfo(initialSelfIdentificationInfo)
+        setLegalAuthorizationInfo(initialLegalAuthorizationInfo)
+        setWorkPreferenceInfo(initialWorkPreferenceInfo)
+        // setResumeWriterPrompt(data.resumeWriterPrompt || '')
+        // setCoverLetterPrompt(data.coverLetterPrompt || '')
+        // setResumeTemplatePath(data.resumeTemplatePath || '')
 
         setInitialData({
-          mainInfo: initialMainInfo,
+          personalInfo: initialPersonalInfo,
           employmentHistory: initialEmploymentHistory,
           educationInfo: formattedEducationInfo,
-          resumeWriterPrompt: data.resumeWriterPrompt || '',
-          coverLetterPrompt: data.coverLetterPrompt || '',
-          resumeTemplatePath: data.resumeTemplatePath || '',
+          selfIdentificationInfo: initialSelfIdentificationInfo,
+          legalAuthorizationIfo: initialLegalAuthorizationInfo,
+          workPreferenceInfo: initialWorkPreferenceInfo,
+          // resumeWriterPrompt: data.resumeWriterPrompt || '',
+          // coverLetterPrompt: data.coverLetterPrompt || '',
+          // resumeTemplatePath: data.resumeTemplatePath || '',
         })
       } catch (error) {
         console.error('Error fetching settings:', error)
@@ -126,30 +218,44 @@ export default function SettingsPage() {
   useEffect(() => {
     if (!initialData) return
 
-    const hasMainInfoChanges = JSON.stringify(mainInfo) !== JSON.stringify(initialData.mainInfo)
+    const hasPersonalInfoChanges =
+      JSON.stringify(personalInfo) !== JSON.stringify(initialData.personalInfo)
     const hasEmploymentChanges =
       JSON.stringify(employmentHistory) !== JSON.stringify(initialData.employmentHistory)
     const hasEducationChanges =
       JSON.stringify(educationInfo) !== JSON.stringify(initialData.educationInfo)
-    const hasResumeWriterPromptChanges = resumeWriterPrompt !== initialData.resumeWriterPrompt
-    const hasCoverLetterPromptChanges = coverLetterPrompt !== initialData.coverLetterPrompt
-    const hasResumeTemplatePathChanges = resumeTemplatePath !== initialData.resumeTemplatePath
+    const hasSelfIdentificationInfoChanges =
+      JSON.stringify(selfIdentificationInfo) !== JSON.stringify(initialData.selfIdentificationInfo)
+    const hasLegalAuthorizationInfoChanges =
+      JSON.stringify(legalAuthorizationInfo) !== JSON.stringify(initialData.legalAuthorizationIfo)
+    const hasWorkPreferenceInfoChanges =
+      JSON.stringify(workPreferenceInfo) !== JSON.stringify(initialData.workPreferenceInfo)
+
+    // const hasResumeWriterPromptChanges = resumeWriterPrompt !== initialData.resumeWriterPrompt
+    // const hasCoverLetterPromptChanges = coverLetterPrompt !== initialData.coverLetterPrompt
+    // const hasResumeTemplatePathChanges = resumeTemplatePath !== initialData.resumeTemplatePath
 
     setHasChanges(
-      hasMainInfoChanges ||
+      hasPersonalInfoChanges ||
         hasEmploymentChanges ||
         hasEducationChanges ||
-        hasResumeWriterPromptChanges ||
-        hasCoverLetterPromptChanges ||
-        hasResumeTemplatePathChanges
+        hasSelfIdentificationInfoChanges ||
+        hasLegalAuthorizationInfoChanges ||
+        hasWorkPreferenceInfoChanges
+      // hasResumeWriterPromptChanges ||
+      // hasCoverLetterPromptChanges ||
+      // hasResumeTemplatePathChanges
     )
   }, [
-    mainInfo,
+    personalInfo,
     employmentHistory,
     educationInfo,
-    resumeWriterPrompt,
-    coverLetterPrompt,
-    resumeTemplatePath,
+    selfIdentificationInfo,
+    legalAuthorizationInfo,
+    workPreferenceInfo,
+    // resumeWriterPrompt,
+    // coverLetterPrompt,
+    // resumeTemplatePath,
     initialData,
   ])
 
@@ -167,8 +273,20 @@ export default function SettingsPage() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [hasChanges]) // Only re-run if hasChanges changes
 
-  const handleMainInfoChange = (field: string, value: string) => {
-    setMainInfo((prev) => ({ ...prev, [field]: value }))
+  const handlePersonalInfoChange = (field: string, value: string) => {
+    setPersonalInfo((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleSelfIdentificationInfoChange = (field: string, value: string) => {
+    setPersonalInfo((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleLegalAuthorizationInfoChange = (field: string, value: string) => {
+    setPersonalInfo((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleWorkPreferenceInfoChange = (field: string, value: string) => {
+    setPersonalInfo((prev) => ({ ...prev, [field]: value }))
   }
 
   const handleEmploymentHistoryChange = (index: number, field: string, value: string) => {
@@ -198,7 +316,7 @@ export default function SettingsPage() {
     setIsSaving(true)
     try {
       await AxiosInstance.put('/api/settings', {
-        mainInfo,
+        personalInfo,
         employmentHistory: employmentHistory.map((item) => ({
           company: item.company,
           title: item.title,
@@ -213,18 +331,21 @@ export default function SettingsPage() {
           from: educationInfo.from,
           to: educationInfo.to,
         },
-        resumeWriterPrompt,
-        coverLetterPrompt,
-        resumeTemplatePath,
+        // resumeWriterPrompt,
+        // coverLetterPrompt,
+        // resumeTemplatePath,
       })
 
       setInitialData({
-        mainInfo: { ...mainInfo },
+        personalInfo: { ...personalInfo },
         employmentHistory: [...employmentHistory],
         educationInfo: { ...educationInfo },
-        resumeWriterPrompt,
-        coverLetterPrompt,
-        resumeTemplatePath,
+        selfIdentificationInfo: { ...selfIdentificationInfo },
+        legalAuthorizationIfo: { ...legalAuthorizationInfo },
+        workPreferenceInfo: { ...workPreferenceInfo },
+        // resumeWriterPrompt,
+        // coverLetterPrompt,
+        // resumeTemplatePath,
       })
       setHasChanges(false)
 
@@ -246,12 +367,15 @@ export default function SettingsPage() {
 
   const handleExport = () => {
     const exportData = {
-      mainInfo,
+      personalInfo,
       employmentHistory,
       educationInfo,
-      resumeWriterPrompt: encodeBase64(resumeWriterPrompt),
-      coverLetterPrompt: encodeBase64(coverLetterPrompt),
-      resumeTemplatePath,
+      selfIdentificationInfo,
+      legalAuthorizationInfo,
+      workPreferenceInfo,
+      // resumeWriterPrompt: encodeBase64(resumeWriterPrompt),
+      // coverLetterPrompt: encodeBase64(coverLetterPrompt),
+      // resumeTemplatePath,
     }
 
     const blob = new Blob([JSON.stringify(exportData, null, 2)], {
@@ -282,7 +406,7 @@ export default function SettingsPage() {
         }
 
         // Update state with imported data
-        setMainInfo(data.mainInfo)
+        setPersonalInfo(data.mainInfo)
         setEmploymentHistory(
           data.employmentHistory.map((item: EmploymentHistory) => ({
             ...item,
@@ -295,9 +419,9 @@ export default function SettingsPage() {
           from: data.educationInfo.from,
           to: data.educationInfo.to,
         })
-        setResumeWriterPrompt(decodeBase64(data.resumeWriterPrompt || ''))
-        setCoverLetterPrompt(decodeBase64(data.coverLetterPrompt || ''))
-        setResumeTemplatePath(data.resumeTemplatePath || '')
+        // setResumeWriterPrompt(decodeBase64(data.resumeWriterPrompt || ''))
+        // setCoverLetterPrompt(decodeBase64(data.coverLetterPrompt || ''))
+        // setResumeTemplatePath(data.resumeTemplatePath || '')
 
         toast({
           title: 'Success',
@@ -362,26 +486,25 @@ export default function SettingsPage() {
       <Tabs defaultValue="resume" className="space-y-4">
         <TabsList>
           <TabsTrigger value="resume">Resume</TabsTrigger>
-          <TabsTrigger value="vai">Vai Settings</TabsTrigger>
-          <TabsTrigger value="account">Account</TabsTrigger>
+          <TabsTrigger value="preference">Preferences</TabsTrigger>
         </TabsList>
 
         <ResumeTab
-          mainInfo={mainInfo}
+          personalInfo={personalInfo}
           employmentHistory={employmentHistory}
           educationInfo={educationInfo}
-          handleMainInfoChange={handleMainInfoChange}
+          handlePersonalInfoChange={handlePersonalInfoChange}
           handleEmploymentHistoryChange={handleEmploymentHistoryChange}
           handleEducationInfoChange={handleEducationInfoChange}
         />
 
-        <VaiTab
-          resumeWriterPrompt={resumeWriterPrompt}
-          coverLetterPrompt={coverLetterPrompt}
-          resumeTemplatePath={resumeTemplatePath}
-          setResumeWriterPrompt={setResumeWriterPrompt}
-          setCoverLetterPrompt={setCoverLetterPrompt}
-          setResumeTemplatePath={setResumeTemplatePath}
+        <PreferenceTab
+          selfIdentification={selfIdentificationInfo}
+          legalAuthorization={legalAuthorizationInfo}
+          workPreference={workPreferenceInfo}
+          handleSelfIdentificationChange={handleSelfIdentificationInfoChange}
+          handleLegalAuthorizationChange={handleLegalAuthorizationInfoChange}
+          handleWorkPreferenceChange={handleWorkPreferenceInfoChange}
         />
       </Tabs>
     </div>

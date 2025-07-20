@@ -2,18 +2,18 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Copy, ExternalLink } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
 import { encodeBase64 } from '@/lib/base64'
-import { Checkbox } from '@/components/ui/checkbox'
 import { AxiosInstance } from '@/lib/axios-instance'
 import { Skeleton } from '@/components/ui/skeleton'
 import Link from 'next/link'
-import { Separator } from '@/components/ui/separator'
+import { GeneratorTab } from '@/components/generator/generator-tab'
+import { UploadTab } from '@/components/generator/upload-tab'
 
-export default function VilderPage() {
+export default function GeneratorPage() {
   const [jobDescription, setJobDescription] = useState('')
   const [generatedContents, setGeneratedContents] = useState<{
     resumePath: string | null
@@ -30,6 +30,20 @@ export default function VilderPage() {
   })
   const [elapsedTime, setElapsedTime] = useState<number | null>(null)
   const { toast } = useToast()
+
+  const [resumeWriterPrompt, setResumeWriterPrompt] = useState<string>('')
+  const [coverLetterPrompt, setCoverLetterPrompt] = useState<string>('')
+  const [resumeTemplatePath, setResumeTemplatePath] = useState<string>('')
+
+  // const [initialData, setInitialData] = useState<{
+  //   resumeWriterPrompt: string
+  //   coverLetterPrompt: string
+  //   resumeTemplatePath: string
+  // }>({
+  //   resumeWriterPrompt: '',
+  //   coverLetterPrompt: '',
+  //   resumeTemplatePath: '',
+  // })
 
   const handleGenerate = async () => {
     if (!jobDescription.trim()) {
@@ -130,87 +144,31 @@ export default function VilderPage() {
 
   return (
     <div className="container space-y-4 py-8">
-      <div className="space-y-4">
-        <div className="flex justify-between">
-          <Label htmlFor="job-description">Job Description</Label>
-        </div>
-        <Textarea
-          id="job-description"
-          placeholder="Paste your job description here..."
-          value={jobDescription}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-            setJobDescription(e.target.value)
-          }
-          className="min-h-[240px] resize-none"
+      <Tabs defaultValue="generator" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="generator">Generator</TabsTrigger>
+          <TabsTrigger value="upload">Upload</TabsTrigger>
+        </TabsList>
+
+        <GeneratorTab
+          jobDescription={jobDescription}
+          selectedOptions={selectedOptions}
+          isGenerating={isGenerating}
+          elapsedTime={elapsedTime}
+          setJobDescription={setJobDescription}
+          setSelectedOptions={setSelectedOptions}
+          handleGenerate={handleGenerate}
         />
-      </div>
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Label>Generate Options:</Label>
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="resume"
-              checked={selectedOptions.resume}
-              onCheckedChange={(checked) =>
-                setSelectedOptions({
-                  ...selectedOptions,
-                  resume: checked as boolean,
-                })
-              }
-              disabled={isGenerating}
-            />
-            <Label htmlFor="resume">Resume</Label>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="cover-letter"
-              checked={selectedOptions.coverLetter}
-              onCheckedChange={(checked) =>
-                setSelectedOptions({
-                  ...selectedOptions,
-                  coverLetter: checked as boolean,
-                })
-              }
-              disabled={isGenerating}
-            />
-            <Label htmlFor="cover-letter">Cover Letter</Label>
-          </div>
-
-          <Separator orientation="vertical" className="h-6" />
-
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="ignore-conflicts"
-              checked={selectedOptions.ignoreConflicts}
-              onCheckedChange={(checked) =>
-                setSelectedOptions({
-                  ...selectedOptions,
-                  ignoreConflicts: checked as boolean,
-                })
-              }
-              disabled={isGenerating}
-            />
-            <Label htmlFor="ignore-conflicts">Ignore Conflicts</Label>
-          </div>
-        </div>
-
-        <div className="flex gap-4 items-center">
-          {elapsedTime !== null && !isGenerating && (
-            <div className="text-sm text-muted-foreground">
-              Generated in {(elapsedTime / 1000).toFixed(2)} seconds
-            </div>
-          )}
-          <Button
-            onClick={handleGenerate}
-            disabled={isGenerating || !jobDescription.trim()}
-            className="w-full sm:w-auto"
-          >
-            {isGenerating ? 'Generating...' : 'Generate'}
-          </Button>
-        </div>
-      </div>
+        <UploadTab
+          resumeWriterPrompt={resumeWriterPrompt}
+          coverLetterPrompt={coverLetterPrompt}
+          resumeTemplatePath={resumeTemplatePath}
+          setResumeWriterPrompt={setResumeWriterPrompt}
+          setCoverLetterPrompt={setCoverLetterPrompt}
+          setResumeTemplatePath={setResumeTemplatePath}
+        />
+      </Tabs>
 
       {(isGenerating || generatedContents.resumePath || generatedContents.coverLetter) && (
         <div className="space-y-6">

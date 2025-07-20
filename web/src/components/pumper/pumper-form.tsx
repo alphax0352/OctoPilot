@@ -28,7 +28,7 @@ import {
   SelectValue,
 } from '../ui/select'
 
-export function PilotForm() {
+export function PumperForm() {
   const { toast } = useToast()
   const {
     mutate: addPilot,

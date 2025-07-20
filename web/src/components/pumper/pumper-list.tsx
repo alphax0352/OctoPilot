@@ -4,14 +4,14 @@ import { useEffect, useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Trash2, Pencil, Loader2Icon, Mail, Layers, WholeWord, Play } from 'lucide-react'
-import { EditPilotDialog } from './edit-pilot-dialog'
+import { EditPumperDialog } from './edit-pumper-dialog'
 import { useToast } from '@/hooks/use-toast'
 import { SavedPilot } from '@/types/client'
 import { useDeletePilot, useGetPilotsInfinite } from '@/hooks/use-pilot'
 import { useTotalCount } from '@/store/total-count'
 import { Skeleton } from '../ui/skeleton'
 
-export function PilotList() {
+export function PumperList() {
   const { toast } = useToast()
   const [editingPilot, setEditingPilot] = useState<SavedPilot | null>(null)
   const { total } = useTotalCount()
@@ -171,7 +171,7 @@ export function PilotList() {
         </div>
       )}
       {editingPilot && (
-        <EditPilotDialog
+        <EditPumperDialog
           pilot={editingPilot}
           open={!!editingPilot}
           onOpenChange={(open) => !open && setEditingPilot(null)}
