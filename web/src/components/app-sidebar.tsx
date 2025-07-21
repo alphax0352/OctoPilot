@@ -1,7 +1,15 @@
 'use client'
 
 import * as React from 'react'
-import { Bot, Home, User, WandSparkles, Settings } from 'lucide-react'
+import {
+  Home,
+  WandSparkles,
+  Briefcase,
+  FileText,
+  Zap,
+  UserCircle,
+  ExternalLink,
+} from 'lucide-react'
 
 import { NavMain } from '@/components/nav-main'
 import { NavUser } from '@/components/nav-user'
@@ -30,17 +38,17 @@ const data = {
     {
       title: 'Job',
       url: '/job',
-      icon: Bot,
+      icon: Briefcase,
     },
     {
       title: 'Application',
       url: '/application',
-      icon: Bot,
+      icon: FileText,
     },
     {
       title: 'Pumper',
       url: '/pumper',
-      icon: User,
+      icon: Zap,
     },
     {
       title: 'Generator',
@@ -50,7 +58,12 @@ const data = {
     {
       title: 'Profile',
       url: '/profile',
-      icon: Settings,
+      icon: UserCircle,
+    },
+    {
+      title: 'Upwork',
+      url: '/upwork',
+      icon: ExternalLink,
     },
   ],
 }
